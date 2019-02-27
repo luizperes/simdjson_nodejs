@@ -35,18 +35,18 @@ std::string_view get_corpus(const std::string& filename) {
     char * buf = allocate_padded_buffer(len);
     if(buf == nullptr) {
       std::fclose(fp);
-      throw  std::runtime_error("could not allocate memory");
+      return nullptr;
     }
     std::rewind(fp);
     size_t readb = std::fread(buf, 1, len, fp);
     std::fclose(fp);
     if(readb != len) {
       aligned_free(buf);
-      throw  std::runtime_error("could not read the data");
+      return nullptr;
     }
     return std::string_view(buf,len);
   }
-  throw  std::runtime_error("could not load corpus");
+  return nullptr;
 }
 /* end file /Users/lemire/CVS/github/simdjson/src/jsonioutil.cpp */
 /* begin file /Users/lemire/CVS/github/simdjson/src/jsonminifier.cpp */

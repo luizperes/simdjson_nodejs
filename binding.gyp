@@ -5,12 +5,12 @@
         "cflags_cc!": [ "-fno-exceptions" ],
         "sources": [
             "simdjson/main.cpp",
-            "simdjson/bindings.cpp"
+            "simdjson/bindings.cpp",
         ],
         'include_dirs': [
             "<!@(node -p \"require('node-addon-api').include\")"
         ],
-        'libraries': [],
+        "libraries": ["~/Projects/simdjson/build/libsimdjson.0.0.1.dylib"],
         'dependencies': [
             "<!(node -p \"require('node-addon-api').gyp\")"
         ],
