@@ -9,4 +9,6 @@ if (simdjsonAddon.isValid("{ \"firstName\": \"John\", \"lastName\": \"Smith\" }"
 
 console.log(simdjsonAddon.parse("{ \"firstName\": \"John\", \"lastName\": \"Smith\" }"));
 
+console.log(simdjsonAddon.parse("{ \"firstName\": \"John\", \"lastName\": \"Smith"));
+
 module.exports = simdjsonAddon;
