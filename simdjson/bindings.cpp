@@ -1,26 +1,21 @@
 #include "bindings.h"
 #include "src/simdjson.h"
 
-std::string simdjson::hello() {
-  std::string_view p = get_corpus("/Users/luizperes/Projects/simdjson/jsonexamples/twitter.json");
+bool simdjson::isValid(std::string_view p) {
   ParsedJson pj = build_parsed_json(p);
-  if( ! pj.isValid() ) {
-    return "not valid";
-  } else {
-    return "valid";
-  }
+  return pj.isValid();
 }
 
-Napi::String simdjson::HelloWrapped(const Napi::CallbackInfo& info) 
+Napi::Boolean simdjson::IsValidWrapped(const Napi::CallbackInfo& info) 
 {
   Napi::Env env = info.Env();
-  Napi::String returnValue = Napi::String::New(env, simdjson::hello());
-  
+  std::string jstr = info[0].As<Napi::String>();
+  Napi::Boolean returnValue = Napi::Boolean::New(env, simdjson::isValid(jstr));
   return returnValue;
 }
 
 Napi::Object simdjson::Init(Napi::Env env, Napi::Object exports) 
 {
-  exports.Set("hello", Napi::Function::New(env, simdjson::HelloWrapped));
+  exports.Set("isValid", Napi::Function::New(env, simdjson::IsValidWrapped));
   return exports;
 }
