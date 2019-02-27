@@ -1,0 +1,34 @@
+{
+  "name": "simdjson",
+  "version": "0.0.1",
+  "description": "Parsing gigabytes of JSON per second",
+  "main": "index.js",
+  "gypfile": true,
+  "scripts": {
+    "build": "node-gyp rebuild",
+    "clean": "node-gyp clean"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luizperes/simdjson_nodejs.git"
+  },
+  "keywords": [
+    "json",
+    "parser",
+    "simd",
+    "jsonparser",
+    "parsing"
+  ],
+  "author": "Luiz Peres",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/luizperes/simdjson_nodejs/issues"
+  },
+  "homepage": "https://github.com/luizperes/simdjson_nodejs#readme",
+  "devDependencies": {
+    "node-gyp": "^3.8.0"
+  },
+  "dependencies": {
+    "node-addon-api": "^1.6.2"
+  }
+}
