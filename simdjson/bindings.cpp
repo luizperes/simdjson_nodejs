@@ -30,40 +30,59 @@ Napi::Value simdjson::makeJSONObject(Napi::Env env, ParsedJson::iterator & pjh) 
       Napi::String key = Napi::String::New(env, pjh.get_string());
       // :
       pjh.next();
-      Napi::String value = Napi::String::New(env, pjh.get_string());
+      Napi::Value value = simdjson::makeJSONObject(env, pjh); // let us recurse
       obj.Set(key, value);
+      while (pjh.next()) { // ,
+        key = Napi::String::New(env, pjh.get_string());
+        pjh.next();
+        // :
+        value = simdjson::makeJSONObject(env, pjh); // let us recurse
+        obj.Set(key, value);
+      }
+      pjh.up();
     }
-    v = obj;
+    v = obj; // }
+  } else if (pjh.is_array()) {
+    std::vector<Napi::Value> arr;
+    if (pjh.down()) {
+      // [
+      Napi::Value value = simdjson::makeJSONObject(env, pjh); // let us recurse
+      arr.push_back(value);
+      while (pjh.next()) { // ,
+        value = simdjson::makeJSONObject(env, pjh); // let us recurse
+        arr.push_back(value);
+      }
+      pjh.up();
+    }
+    // ]
+    Napi::Array array = Napi::Array::New(env, arr.size());
+    for (std::size_t i{ 0 }; i < arr.size(); i++) array.Set(i, arr[i]);
+    v = array;
+  } else if (pjh.is_string()) {
+    v = Napi::String::New(env, pjh.get_string());
+  } else if (pjh.is_double()) {
+    v = Napi::Number::New(env, pjh.get_double());
+  } else if (pjh.is_integer()) {
+    v = Napi::Number::New(env, pjh.get_integer());
+  } else {
+    switch (pjh.get_type()) {
+      case 't':  {
+        v = Napi::Boolean::New(env, true);
+        break;
+      }
+      case 'f': {
+        v = Napi::Boolean::New(env, false);
+        break;
+      }
+      case 'n': {
+        v = env.Null();
+        break;
+      }
+      default : break;
+    }
   }
+  
   return v;
-  //     Napi:Value value = simdjson::makeJSONObject(env, pjh); // let us recurse
-
-  //     while (pjh.next()) {
-  //       std::cout << ",";
-  //       pjh.print(std::cout);
-  //       std::cout << ":";
-  //       pjh.next();
-  //       compute_dump(pjh); // let us recurse
-  //     }
-  //     pjh.up();
-  //   }
-  //   v = obj; // }
-  // } else if (pjh.is_array()) {
-  //   std::cout << "[";
-  //   if (pjh.down()) {
-  //     compute_dump(pjh); // let us recurse
-  //     while (pjh.next()) {
-  //       std::cout << ",";
-  //       compute_dump(pjh); // let us recurse
-  //     }
-  //     pjh.up();
-  //   }
-  //   std::cout << "]";
-  // } else {
-  //   pjh.print(std::cout); // just print the lone value
-  // }
-  // 
-  // return v;
 }
 
 Napi::Object simdjson::ParseWrapped(const Napi::CallbackInfo& info) {
