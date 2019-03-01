@@ -52,7 +52,7 @@ const parsedJSON = simdjson.parse(jsonString) // parsed JSON object
 
 ### Ops/sec
 
-```Javascript
+```Text
 apache_builds.json#simdjson x 7,622 ops/sec ±0.58% (89 runs sampled) => 0.00013120465355748363
 apache_builds.json#JSON x 1,391 ops/sec ±1.13% (90 runs sampled) => 0.0007187123801716652
 canada.json#simdjson x 236 ops/sec ±0.55% (84 runs sampled) => 0.004240565511370573
