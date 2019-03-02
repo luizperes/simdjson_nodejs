@@ -1,16 +1,17 @@
 {
     "targets": [{
         "target_name": "simdjson",
+        "default_configuration": "Release",
         "cflags!": [ "-fno-exceptions" ],
-        "cflags_cc!": [ "-fno-exceptions" ],
-        "sources": [
+        "cflags_cc!": [ "-fno-exceptions", "-std=gnu++0x" ],
+        "cflags_cc+": ["-march=native", "-std=c++17"],
+         "sources": [
             "simdjson/main.cpp",
             "simdjson/bindings.cpp",
         ],
         'include_dirs': [
             "<!@(node -p \"require('node-addon-api').include\")"
         ],
-        "libraries": ["~/Projects/simdjson/build/libsimdjson.0.0.1.dylib"],
         'dependencies': [
             "<!(node -p \"require('node-addon-api').gyp\")"
         ],
