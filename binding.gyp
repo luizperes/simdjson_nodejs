@@ -8,6 +8,7 @@
          "sources": [
             "simdjson/main.cpp",
             "simdjson/bindings.cpp",
+            "simdjson/src/simdjson.cpp"
         ],
         'include_dirs': [
             "<!@(node -p \"require('node-addon-api').include\")"

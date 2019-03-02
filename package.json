@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/luizperes/simdjson_nodejs#readme",
   "devDependencies": {
+    "benchmark": "^2.1.4",
     "node-gyp": "^3.8.0"
   },
   "dependencies": {
