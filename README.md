@@ -33,6 +33,19 @@ const parsedJSON = simdjson.parse(jsonString) // parsed JSON object
 
 ## Benchmarks
 
+Requirements: git, npm, node, a linux-like system, a recent compiler (GCC,clang)
+
+To benchmark directly from the project:
+
+```
+git clone https://github.com/luizperes/simdjson_nodejs.git
+cd simdjson_nodejs
+npm install
+cd benchmark
+node benchmark
+```
+
+
 |      filename     |   JSON file    |   simdjson file |
 | :---------------: | :------------: | :-------------: |
 | apache_builds.json | 0.0007187123801716652 | 0.00013120465355748363 |
