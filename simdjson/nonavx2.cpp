@@ -1,3 +1,4 @@
+#ifndef __AVX2__
 #include <nan.h>
 
 NAN_METHOD(hasAVX2) {
@@ -10,3 +11,4 @@ NAN_MODULE_INIT(simdjsonInit) {
 }
 
 NODE_MODULE(simdjson, simdjsonInit);
+#endif
