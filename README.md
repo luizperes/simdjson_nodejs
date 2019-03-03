@@ -6,13 +6,6 @@ The installation can be done in one step with `npm`:
 
 `npm install simdjson`
 
-### AVX2
-
-*simdjson* requires AVX2 support to function. Check to see if your OS/processor supports it:
-
-- OS X: `sysctl -a | grep machdep.cpu.leaf7_features`
-- Linux: `grep avx2 /proc/cpuinfo`
-
 ## Usage
 
 ##### Check if a JSON string is valid:
@@ -20,7 +13,7 @@ The installation can be done in one step with `npm`:
 const simdjson = require('simdjson');
 
 const jsonString = ...
-const valid = simdjson.isValid(jsonString) // true
+const valid = simdjson.isValid(jsonString); // true
 ```
 
 ##### Parsing a JSON string
@@ -28,7 +21,7 @@ const valid = simdjson.isValid(jsonString) // true
 const simdjson = require('simdjson');
 
 const jsonString = ...
-const parsedJSON = simdjson.parse(jsonString) // parsed JSON object
+const parsedJSON = simdjson.parse(jsonString); // parsed JSON object
 ```
 
 ## Benchmarks
@@ -46,7 +39,7 @@ node benchmark
 ```
 
 
-|      filename     |   JSON file    |   simdjson file |
+|      filename     |   default JSON |    simdjson     |
 | :---------------: | :------------: | :-------------: |
 | apache_builds.json | 0.0007187123801716652 | 0.00013120465355748363 |
 | canada.json | 0.023433125946428573 | 0.004240565511370573 |
@@ -102,3 +95,10 @@ You may run the benchmarks by running the commands:
 
 ###### Observation:
 Please refer to the the original repository benchmarks for more information about the performance of *simdjson* [https://github.com/lemire/simdjson](https://github.com/lemire/simdjson).
+
+### AVX2
+
+*simdjson* will choose the default JS `JSON` library in case that your machine does not have AVX2 support. Therefore, it is required AVX2 support in order to use all of its powers. You may want to check whether your OS/processor supports it:
+
+- OS X: `sysctl -a | grep machdep.cpu.leaf7_features`
+- Linux: `grep avx2 /proc/cpuinfo`
