@@ -2,14 +2,12 @@
   "variables": {
     "avx": "",
     "avx2": "",
-  },    
-
+  },
   "targets": [
     {    
       "target_name": "simdjson",
       'include_dirs': ["<!@(node -p \"require('nan').include\")"],
-      "sources": ["simdjson/nonavx2.cpp"],    
-      "defines": [],
+      "sources": ["simdjson/nonavx2.cpp"],
       "conditions": [
         ["OS=='mac'", {          
           "xcode_settings": {
@@ -17,6 +15,7 @@
             'CLANG_CXX_LIBRARY': 'libc++',
             'MACOSX_DEPLOYMENT_TARGET': '10.7',            
           },
+          "cflags_cc+": ["-march=native", "-std=c++17"],
           "conditions": [
             ["avx2 == 'true'", {
               "sources": ["simdjson/src/simdjson.cpp", "simdson/binding.cpp"],
@@ -37,8 +36,9 @@
           ]
         }],
         ["OS=='linux'", {          
-          'cflags!': [ '-fno-exceptions' ],
-          'cflags_cc!': [ '-fno-exceptions' ],
+          "cflags!": [ "-fno-exceptions" ],
+          "cflags_cc!": [ "-fno-exceptions", "-std=gnu++0x", "-std=gnu++1y" ],
+          "cflags_cc+": ["-march=native", "-std=c++17"],
           "conditions": [
             ["avx2 == 'true'", {
               "sources": ["simdjson/src/simdjson.cpp", "simdson/binding.cpp"],
@@ -51,6 +51,7 @@
           ]
         }],
         ["OS=='win'", {
+          "cflags_cc+": ["-march=native", "-std=c++17"],
           'msvs_settings': {
             'VCCLCompilerTool': { 'ExceptionHandling': 1 },
           },                    
