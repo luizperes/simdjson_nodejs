@@ -1,4 +1,4 @@
-#include <napi.h>
+#include <nan.h>
 
 #ifdef __AVX2__
 #include "bindings.h"
@@ -9,21 +9,12 @@ namespace simdjson {
   }
 }
 #else
-namespace simdjson {
-  Napi::Boolean hasAVX2(const Napi::CallbackInfo& info) {
-    Napi::Env env = info.Env();
-    return Napi::Boolean::New(env, false);
-  }
+NAN_METHOD(hasAVX2) {
+    auto r = Nan::New(false);
+    info.GetReturnValue().Set(r);
 }
-#endif
-
-Napi::Object InitAll(Napi::Env env, Napi::Object exports) {
-  exports.Set("hasAVX2", Napi::Function::New(env, simdjson::hasAVX2));
-#ifdef __AVX2__
-  return simdjson::Init(env, exports);
-#else
-  return exports;
-#endif
+NAN_MODULE_INIT(simdjsonInit) {
+    NAN_EXPORT(target, hasAVX2);
 }
-
-NODE_API_MODULE(simdjson, InitAll)
+NODE_MODULE(simdjson, simdjsonInit);
+#endif

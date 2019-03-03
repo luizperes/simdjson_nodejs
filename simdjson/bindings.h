@@ -1,4 +1,4 @@
-#include <napi.h>
+#include <nan.h>
 #include "src/simdjson.h"
 
 namespace simdjson {

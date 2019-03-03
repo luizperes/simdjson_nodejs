@@ -1,5 +1,5 @@
-const simdjson_ = require('./build/Release/simdjson.node');
-if (simdjson.hasAVX2()) {
+const simdjson_ = require('./build/Release/simdjson');
+if (simdjson_.hasAVX2()) {
     const simdjson = simdjson_;
     module.exports = simdjson;
 } else {
