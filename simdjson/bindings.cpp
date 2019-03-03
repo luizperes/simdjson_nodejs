@@ -1,7 +1,7 @@
+#ifdef __AVX2__
 #include <nan.h>
 #include "src/simdjson.h"
 
-#ifdef __AVX2__
 NAN_METHOD(hasAVX2) {
   auto r = Nan::True();
   info.GetReturnValue().Set(r);
@@ -13,7 +13,6 @@ NAN_METHOD(isValid) {
   auto r = Nan::New(pj.isValid());
   info.GetReturnValue().Set(r);
 }
-#endif
 
 static v8::Local<v8::Value> makeJSONObject(ParsedJson::iterator & pjh) {
   v8::Local<v8::Value> v;
@@ -90,11 +89,10 @@ NAN_METHOD(parse) {
 }
 
 NAN_MODULE_INIT(simdjsonInit) {
-#ifdef __AVX2__
   NAN_EXPORT(target, hasAVX2);
   NAN_EXPORT(target, isValid);
-#endif
   NAN_EXPORT(target, parse);
 }
 
 NODE_MODULE(simdjson, simdjsonInit);
+#endif
