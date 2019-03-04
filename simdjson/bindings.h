@@ -12,6 +12,8 @@ namespace simdjson {
   Napi::Value makeJSONObject(Napi::Env env, ParsedJson::iterator & pj);
   Napi::Object ParseWrapped(const Napi::CallbackInfo& info);
 
+  Napi::Object ParseFastWrapped(const Napi::CallbackInfo& info);
+
   Napi::Object Init(Napi::Env env, Napi::Object exports);
 }
 
