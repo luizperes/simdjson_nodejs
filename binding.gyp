@@ -6,6 +6,7 @@
       "cflags": ["-O3", "-std=c99"],
       "cflags_cc": ["-O3", "-std=c++17"],
       "sources": [
+        "simdjson/main.cpp",
         "simdjson/nonavx2.cpp"
       ],
       "include_dirs": ["<!@(node -p \"require('node-addon-api').include\")"],
@@ -23,7 +24,11 @@
             "cflags!": ["-fno-exceptions"],
             "cflags_cc!": ["-O3", "-fno-exceptions", "-std=gnu++0x", "-std=gnu++1y", "-mavx2", "-mavx", "-mbmi", "-mpclmul"],
             "cflags_cc+": ["-O3", "-march=native", "-std=c++17", "-mavx2", "-mavx", "-mbmi", "-mpclmul"],
-            "sources": ["simdjson/src/simdjson.cpp", "simdjson/bindings.cpp"],
+            "sources": [
+              "simdjson/main.cpp",
+              "simdjson/src/simdjson.cpp",
+              "simdjson/bindings.cpp"
+            ],
             "xcode_settings": {
               "GCC_ENABLE_SSE42_EXTENSIONS": "YES",
               "CLANG_X86_VECTOR_INSTRUCTIONS": "avx2",
