@@ -1,4 +1,10 @@
+#ifdef __AVX2__
 #include "bindings.h"
+
+Napi::Boolean simdjson::hasAVX2Wrapped(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  return Napi::Boolean::New(env, true);
+}
 
 bool simdjson::isValid(std::string_view p) {
   ParsedJson pj = build_parsed_json(p);
@@ -93,7 +99,10 @@ Napi::Object simdjson::ParseWrapped(const Napi::CallbackInfo& info) {
 }
 
 Napi::Object simdjson::Init(Napi::Env env, Napi::Object exports) {
+  exports.Set("hasAVX2", Napi::Function::New(env, simdjson::hasAVX2Wrapped));
   exports.Set("isValid", Napi::Function::New(env, simdjson::IsValidWrapped));
   exports.Set("parse", Napi::Function::New(env, simdjson::ParseWrapped));
   return exports;
 }
+
+#endif

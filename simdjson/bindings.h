@@ -1,8 +1,11 @@
+#ifdef __AVX2__
 #include <napi.h>
 #include "src/simdjson.h"
 
 namespace simdjson {
-    
+
+  Napi::Boolean hasAVX2Wrapped(const Napi::CallbackInfo& info);
+
   bool isValid(std::string_view p);
   Napi::Boolean IsValidWrapped(const Napi::CallbackInfo& info);
     
@@ -13,3 +16,4 @@ namespace simdjson {
   Napi::Object Init(Napi::Env env, Napi::Object exports);
 
 }
+#endif
