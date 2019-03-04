@@ -1,2 +1,2 @@
-const simdjson = require('./build/Release/simdjson.node');
+const simdjson = require('./lib/simdjsontarget');
 module.exports = simdjson;
