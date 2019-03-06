@@ -36,7 +36,7 @@
             },
             "msvs_settings": {
               "VCCLCompilerTool": {
-                "AdditionalOptions": ["/arch:AVX2", "/mavx2", "/mavx", "/mbmi", "/mpclmul"]
+                "AdditionalOptions": ["/std:c++17", "/arch:AVX2"]
               }
             },
             "include_dirs": ["<!@(node -p \"require('node-addon-api').include\")"],
