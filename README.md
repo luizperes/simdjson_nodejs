@@ -103,3 +103,8 @@ Please refer to the the original repository benchmarks for more information abou
 
 - OS X: `sysctl -a | grep machdep.cpu.leaf7_features`
 - Linux: `grep avx2 /proc/cpuinfo`
+- Windows:
+  - `clone https://github.com/Mysticial/FeatureDetector`
+  - `mkdir build && cd build`
+  - `cmake ..`
+  - `make`
