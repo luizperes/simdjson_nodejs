@@ -107,26 +107,12 @@ Napi::Object simdjson::ParseFastWrapped(const Napi::CallbackInfo& info) {
   }
   Napi::Object json = Napi::Object::New(env);
   Napi::String key = Napi::String::New(env, "buffer");
-  ParsedJson::iterator *pjh = new ParsedJson::iterator(pj);
-  auto i = 0;
-  do {
-    pjh->print(std::cout);
-    i++;
-  }while(pjh->move_forward());
-  std::cout << " blah "<<i << "\n";
-  
-  Napi::ArrayBuffer buffer = Napi::ArrayBuffer::New(env, pjh, pjh->get_tape_length());
+  ParsedJson::iterator * pjh = new ParsedJson::iterator(pj);
+  Napi::External<ParsedJson::iterator> buffer = Napi::External<ParsedJson::iterator>::New(env, pjh,
+    [](Napi::Env /*env*/, ParsedJson::iterator * data) {
+      delete data;
+    });
   json.Set(key, buffer);
-
-  Napi::ArrayBuffer buffer2 = json.Get(key).As<Napi::ArrayBuffer>();
-  ParsedJson::iterator *jaca = (ParsedJson::iterator *)buffer2.Data();
-  do {
-    jaca->print(std::cout);
-  }while(jaca->move_forward());
-  // ParsedJson::iterator jaca();
-  // do {
-  //   jaca.print(std::cout);
-  // } while(jaca.move_forward());
   return json;  
 }
 
