@@ -1,33 +1,33 @@
 #ifdef __AVX2__
 #include "bindings.h"
 
-Napi::Boolean simdjson::hasAVX2Wrapped(const Napi::CallbackInfo& info) {
+Napi::Boolean simdjsonnode::hasAVX2Wrapped(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   return Napi::Boolean::New(env, true);
 }
 
-bool simdjson::isValid(std::string_view p) {
+bool simdjsonnode::isValid(std::string_view p) {
   ParsedJson pj = build_parsed_json(p);
   return pj.isValid();
 }
 
-Napi::Boolean simdjson::IsValidWrapped(const Napi::CallbackInfo& info) {
+Napi::Boolean simdjsonnode::IsValidWrapped(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   std::string jstr = info[0].As<Napi::String>();
-  Napi::Boolean returnValue = Napi::Boolean::New(env, simdjson::isValid(jstr));
+  Napi::Boolean returnValue = Napi::Boolean::New(env, simdjsonnode::isValid(jstr));
   return returnValue;
 }
 
-Napi::Object simdjson::parse(Napi::Env env, std::string_view p) {
+Napi::Object simdjsonnode::parse(Napi::Env env, std::string_view p) {
   ParsedJson pj = build_parsed_json(p);
   if (!pj.isValid()) {
     Napi::Error::New(env, "Invalid JSON Exception").ThrowAsJavaScriptException();
   }
   ParsedJson::iterator pjh(pj);
-  return simdjson::makeJSONObject(env, pjh).As<Napi::Object>();
+  return simdjsonnode::makeJSONObject(env, pjh).As<Napi::Object>();
 }
 
-Napi::Value simdjson::makeJSONObject(Napi::Env env, ParsedJson::iterator & pjh) {
+Napi::Value simdjsonnode::makeJSONObject(Napi::Env env, ParsedJson::iterator & pjh) {
   Napi::Value v;
   if (pjh.is_object()) {
     Napi::Object obj = Napi::Object::New(env); // {
@@ -36,13 +36,13 @@ Napi::Value simdjson::makeJSONObject(Napi::Env env, ParsedJson::iterator & pjh) 
       Napi::String key = Napi::String::New(env, pjh.get_string());
       // :
       pjh.next();
-      Napi::Value value = simdjson::makeJSONObject(env, pjh); // let us recurse
+      Napi::Value value = simdjsonnode::makeJSONObject(env, pjh); // let us recurse
       obj.Set(key, value);
       while (pjh.next()) { // ,
         key = Napi::String::New(env, pjh.get_string());
         pjh.next();
         // :
-        value = simdjson::makeJSONObject(env, pjh); // let us recurse
+        value = simdjsonnode::makeJSONObject(env, pjh); // let us recurse
         obj.Set(key, value);
       }
       pjh.up();
@@ -52,10 +52,10 @@ Napi::Value simdjson::makeJSONObject(Napi::Env env, ParsedJson::iterator & pjh) 
     std::vector<Napi::Value> arr;
     if (pjh.down()) {
       // [
-      Napi::Value value = simdjson::makeJSONObject(env, pjh); // let us recurse
+      Napi::Value value = simdjsonnode::makeJSONObject(env, pjh); // let us recurse
       arr.push_back(value);
       while (pjh.next()) { // ,
-        value = simdjson::makeJSONObject(env, pjh); // let us recurse
+        value = simdjsonnode::makeJSONObject(env, pjh); // let us recurse
         arr.push_back(value);
       }
       pjh.up();
@@ -91,17 +91,17 @@ Napi::Value simdjson::makeJSONObject(Napi::Env env, ParsedJson::iterator & pjh) 
   return v;
 }
 
-Napi::Object simdjson::ParseWrapped(const Napi::CallbackInfo& info) {
+Napi::Object simdjsonnode::ParseWrapped(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   std::string jstr = info[0].As<Napi::String>();
-  Napi::Object json = simdjson::parse(env, jstr);
+  Napi::Object json = simdjsonnode::parse(env, jstr);
   return json;
 }
 
-Napi::Object simdjson::Init(Napi::Env env, Napi::Object exports) {
-  exports.Set("hasAVX2", Napi::Function::New(env, simdjson::hasAVX2Wrapped));
-  exports.Set("isValid", Napi::Function::New(env, simdjson::IsValidWrapped));
-  exports.Set("parse", Napi::Function::New(env, simdjson::ParseWrapped));
+Napi::Object simdjsonnode::Init(Napi::Env env, Napi::Object exports) {
+  exports.Set("hasAVX2", Napi::Function::New(env, simdjsonnode::hasAVX2Wrapped));
+  exports.Set("isValid", Napi::Function::New(env, simdjsonnode::IsValidWrapped));
+  exports.Set("parse", Napi::Function::New(env, simdjsonnode::ParseWrapped));
   return exports;
 }
 

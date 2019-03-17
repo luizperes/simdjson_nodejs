@@ -2,7 +2,7 @@
 #include <napi.h>
 #include "src/simdjson.h"
 
-namespace simdjson {
+namespace simdjsonnode {
   Napi::Boolean hasAVX2Wrapped(const Napi::CallbackInfo& info);
 
   bool isValid(std::string_view p);
