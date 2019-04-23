@@ -18,89 +18,112 @@ const random = fs.readFileSync('../jsonexamples/random.json', 'utf-8');
 const twitter = fs.readFileSync('../jsonexamples/twitter.json', 'utf-8');
 const twitterescaped = fs.readFileSync('../jsonexamples/twitterescaped.json', 'utf-8');
 const update_center = fs.readFileSync('../jsonexamples/update-center.json', 'utf-8');
-suite.add('apache_builds.json#simdjson', function() {
-    simdjson.isValid(apache_builds);
+
+// Generate very big JSON at runtime or else there would be a file > 300mb
+const RANDOM_STRING = 'abcdefghijklmnopqrstuvwxCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-=_+[]{}\\|;:\'",<.>/?`~';
+const stringLength = Math.pow(2, 10);
+const bigString = new Array(stringLength).fill(RANDOM_STRING).join('');
+const arrayLength = Math.pow(2, 7);
+const bigArray = new Array(arrayLength).fill(bigString);
+let index = 0;
+const objectSize = Math.pow(2, 2);
+const bigObject = new Array(objectSize).fill(undefined).reduce((accumulator) => {
+  accumulator[index] = bigArray;
+  index++;
+  return accumulator;
+}, {});
+const big_nonsense = JSON.stringify(bigObject);
+
+suite
+  .add('apache_builds.json#simdjson', function() {
+    simdjson.parse(apache_builds);
   })
   .add('apache_builds.json#JSON', function() {
-    json.isValid(apache_builds);
+    JSON.parse(apache_builds);
   })
   .add('canada.json#simdjson', function() {
-    simdjson.isValid(canada);
+    simdjson.parse(canada);
   })
   .add('canada.json#JSON', function() {
-    json.isValid(canada);
+    JSON.parse(canada);
   })
   .add('citm_catalog.json#simdjson', function() {
-    simdjson.isValid(citm_catalog);
+    simdjson.parse(citm_catalog);
   })
   .add('citm_catalog.json#JSON', function() {
-    json.isValid(citm_catalog);
+    JSON.parse(citm_catalog);
   })
   .add('github_events.json#simdjson', function() {
-    simdjson.isValid(github_events);
+    simdjson.parse(github_events);
   })
   .add('github_events.json#JSON', function() {
-    json.isValid(github_events);
+    JSON.parse(github_events);
   })
   .add('gsoc-2018.json#simdjson', function() {
-    simdjson.isValid(gsoc_2018);
+    simdjson.parse(gsoc_2018);
   })
   .add('gsoc-2018.json#JSON', function() {
-    json.isValid(gsoc_2018);
+    JSON.parse(gsoc_2018);
   })
   .add('instruments.json#simdjson', function() {
-    simdjson.isValid(instruments);
+    simdjson.parse(instruments);
   })
   .add('instruments.json#JSON', function() {
-    json.isValid(instruments);
+    JSON.parse(instruments);
   })
   .add('marine-ik.json#simdjson', function() {
-    simdjson.isValid(marine_ik);
+    simdjson.parse(marine_ik);
   })
   .add('marine-ik.json#JSON', function() {
-    json.isValid(marine_ik);
+    JSON.parse(marine_ik);
   })
   .add('mesh.json#simdjson', function() {
-    simdjson.isValid(mesh);
+    simdjson.parse(mesh);
   })
   .add('mesh.json#JSON', function() {
-    json.isValid(mesh);
+    JSON.parse(mesh);
   })
   .add('mesh.pretty.json#simdjson', function() {
-    simdjson.isValid(mesh_pretty);
+    simdjson.parse(mesh_pretty);
   })
   .add('mesh.pretty.json#JSON', function() {
-    json.isValid(mesh_pretty);
+    JSON.parse(mesh_pretty);
   })
   .add('numbers.json#simdjson', function() {
-    simdjson.isValid(numbers);
+    simdjson.parse(numbers);
   })
   .add('numbers.json#JSON', function() {
-    json.isValid(numbers);
+    JSON.parse(numbers);
   })
   .add('random.json#simdjson', function() {
-    simdjson.isValid(random);
+    simdjson.parse(random);
   })
   .add('random.json#JSON', function() {
-    json.isValid(random);
+    JSON.parse(random);
   })
   .add('twitter.json#simdjson', function() {
-    simdjson.isValid(twitter);
+    simdjson.parse(twitter);
   })
   .add('twitter.json#JSON', function() {
-    json.isValid(twitter);
+    JSON.parse(twitter);
   })
   .add('twitterescaped.json#simdjson', function() {
-    simdjson.isValid(twitterescaped);
+    simdjson.parse(twitterescaped);
   })
   .add('twitterescaped.json#JSON', function() {
-    json.isValid(twitterescaped);
+    JSON.parse(twitterescaped);
   })
   .add('update-center.json#simdjson', function() {
-    simdjson.isValid(update_center);
+    simdjson.parse(update_center);
   })
   .add('update-center.json#JSON', function() {
-    json.isValid(update_center);
+    JSON.parse(update_center);
+  })
+  .add('big_nonsense.json#simdjson', function() {
+    simdjson.parse(big_nonsense);
+  })
+  .add('big_nonsense.json#JSON', function() {
+    JSON.parse(big_nonsense);
   })
   .on('cycle', function(event) {
     console.log(String(event.target) + " => " + String(event.target.times.period)) + " secs";
