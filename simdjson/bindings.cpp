@@ -1,7 +1,7 @@
 #ifdef __AVX2__
 #include "bindings.h"
 
-Napi::Boolean simdjsonnode::hasAVX2Wrapped(const Napi::CallbackInfo& info) {
+Napi::Boolean simdjsonnode::HasAVX2Wrapped(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   return Napi::Boolean::New(env, true);
 }
@@ -91,15 +91,22 @@ Napi::Value simdjsonnode::makeJSONObject(Napi::Env env, ParsedJson::iterator & p
   return v;
 }
 
+Napi::Value simdjsonnode::ValueForKeyPathWrapped(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  std::string path = info[0].As<Napi::String>();
+  return Napi::String::New(env, path);;
+}
+
 Napi::Object simdjsonnode::ParseWrapped(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   std::string jstr = info[0].As<Napi::String>();
   Napi::Object json = simdjsonnode::parse(env, jstr);
+  json.Set("valueForKeyPath", Napi::Function::New(env, simdjsonnode::ValueForKeyPathWrapped));
   return json;
 }
 
 Napi::Object simdjsonnode::Init(Napi::Env env, Napi::Object exports) {
-  exports.Set("hasAVX2", Napi::Function::New(env, simdjsonnode::hasAVX2Wrapped));
+  exports.Set("hasAVX2", Napi::Function::New(env, simdjsonnode::HasAVX2Wrapped));
   exports.Set("isValid", Napi::Function::New(env, simdjsonnode::IsValidWrapped));
   exports.Set("parse", Napi::Function::New(env, simdjsonnode::ParseWrapped));
   return exports;
