@@ -91,6 +91,38 @@ Napi::Value simdjsonnode::makeJSONObject(Napi::Env env, ParsedJson::iterator & p
   return v;
 }
 
+std::pair<int, std::string> simdjsonnode::getNextSubpath(std::string path) {
+  int begin = 0;
+  int end = 0;
+  for(std::string::size_type i = 0; i < path.size(); ++i) {
+    end++;
+    if (path[i] == '.' || path[i] == '[' || path[i] == ']') {
+      break;
+    }
+  }
+  if (begin == end) return std::make_pair(-1, "");
+  return std::make_pair(end, path.substr(0, end - 1));
+}
+
+static bool isNumber(std::string s) {
+  for(std::string::size_type i = 0; i < s.size(); ++i) {
+    if (!isdigit(s[i])) return false;
+  }
+  return true;
+}
+
+ParsedJson::iterator & simdjsonnode::findKeyPath(Napi::Env env, std::string path, ParsedJson::iterator & pjh) {
+  std::pair<int, std::string> subpath(getNextSubpath(path));
+  bool isObj = !isNumber(subpath.second);
+  int next = subpath.first;
+  if (isObj) {
+    if (pjh.down()) {
+      // TODO: finish writing the code that finds the keypath
+    }
+  }
+  return pjh;
+}
+
 Napi::Value simdjsonnode::ValueForKeyPathWrapped(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   std::string path = info[0].As<Napi::String>();
@@ -98,8 +130,8 @@ Napi::Value simdjsonnode::ValueForKeyPathWrapped(const Napi::CallbackInfo& info)
   Napi::External<ParsedJson> buffer = _this.Get("buffer").As<Napi::External<ParsedJson>>();
   ParsedJson * pj = buffer.Data();
   ParsedJson::iterator pjh(*pj);
-
-  return simdjsonnode::makeJSONObject(env, pjh).As<Napi::Object>();
+  ParsedJson::iterator pjhh(simdjsonnode::findKeyPath(env, path, pjh));
+  return simdjsonnode::makeJSONObject(env, pjhh).As<Napi::Object>();
 }
 
 Napi::Object simdjsonnode::ParseWrapped(const Napi::CallbackInfo& info) {
