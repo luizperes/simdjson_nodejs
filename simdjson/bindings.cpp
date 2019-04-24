@@ -1,4 +1,4 @@
-#ifdef __AVX2__
+// #ifdef __AVX2__
 #include "bindings.h"
 
 Napi::Boolean simdjsonnode::HasAVX2Wrapped(const Napi::CallbackInfo& info) {
@@ -101,15 +101,34 @@ Napi::Object simdjsonnode::ParseWrapped(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   std::string jstr = info[0].As<Napi::String>();
   Napi::Object json = simdjsonnode::parse(env, jstr);
-  json.Set("valueForKeyPath", Napi::Function::New(env, simdjsonnode::ValueForKeyPathWrapped));
   return json;
+}
+
+Napi::Object simdjsonnode::ParseFastWrapped(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  std::string jstr = info[0].As<Napi::String>();
+  ParsedJson pj = build_parsed_json(jstr);
+  if (!pj.isValid()) {
+    Napi::Error::New(env, "Invalid JSON Exception").ThrowAsJavaScriptException();
+  }
+  Napi::Object json = Napi::Object::New(env);
+  Napi::String key = Napi::String::New(env, "buffer");
+  ParsedJson::iterator * pjh = new ParsedJson::iterator(pj);
+  Napi::External<ParsedJson::iterator> buffer = Napi::External<ParsedJson::iterator>::New(env, pjh,
+    [](Napi::Env /*env*/, ParsedJson::iterator * data) {
+      delete data;
+    });
+  json.Set(key, buffer);
+  json.Set("valueForKeyPath", Napi::Function::New(env, simdjsonnode::ValueForKeyPathWrapped));
+  return json;  
 }
 
 Napi::Object simdjsonnode::Init(Napi::Env env, Napi::Object exports) {
   exports.Set("hasAVX2", Napi::Function::New(env, simdjsonnode::HasAVX2Wrapped));
   exports.Set("isValid", Napi::Function::New(env, simdjsonnode::IsValidWrapped));
   exports.Set("parse", Napi::Function::New(env, simdjsonnode::ParseWrapped));
+  exports.Set("parseFast", Napi::Function::New(env, simdjsonnode::ParseFastWrapped));
   return exports;
 }
 
-#endif
+// #endif
