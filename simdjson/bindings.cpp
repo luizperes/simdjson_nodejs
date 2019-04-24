@@ -94,7 +94,11 @@ Napi::Value simdjsonnode::makeJSONObject(Napi::Env env, ParsedJson::iterator & p
 Napi::Value simdjsonnode::ValueForKeyPathWrapped(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   std::string path = info[0].As<Napi::String>();
-  return Napi::String::New(env, path);;
+  Napi::Object _this = info.This().As<Napi::Object>();
+  Napi::External<ParsedJson> buffer = _this.Get("buffer").As<Napi::External<ParsedJson>>();
+  ParsedJson * pj = buffer.Data();
+  ParsedJson::iterator pjh(*pj);
+  return simdjsonnode::makeJSONObject(env, pjh).As<Napi::Object>();
 }
 
 Napi::Object simdjsonnode::ParseWrapped(const Napi::CallbackInfo& info) {
@@ -113,9 +117,9 @@ Napi::Object simdjsonnode::ParseFastWrapped(const Napi::CallbackInfo& info) {
   }
   Napi::Object json = Napi::Object::New(env);
   Napi::String key = Napi::String::New(env, "buffer");
-  ParsedJson::iterator * pjh = new ParsedJson::iterator(pj);
-  Napi::External<ParsedJson::iterator> buffer = Napi::External<ParsedJson::iterator>::New(env, pjh,
-    [](Napi::Env /*env*/, ParsedJson::iterator * data) {
+  ParsedJson *pjh = new ParsedJson(std::move(pj));
+  Napi::External<ParsedJson> buffer = Napi::External<ParsedJson>::New(env, pjh,
+    [](Napi::Env /*env*/, ParsedJson * data) {
       delete data;
     });
   json.Set(key, buffer);
