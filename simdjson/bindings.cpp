@@ -1,4 +1,4 @@
-// #ifdef __AVX2__
+#ifdef __AVX2__
 #include "bindings.h"
 
 Napi::Boolean simdjsonnode::HasAVX2Wrapped(const Napi::CallbackInfo& info) {
@@ -135,4 +135,4 @@ Napi::Object simdjsonnode::Init(Napi::Env env, Napi::Object exports) {
   return exports;
 }
 
-// #endif
+#endif
