@@ -98,6 +98,7 @@ Napi::Value simdjsonnode::ValueForKeyPathWrapped(const Napi::CallbackInfo& info)
   Napi::External<ParsedJson> buffer = _this.Get("buffer").As<Napi::External<ParsedJson>>();
   ParsedJson * pj = buffer.Data();
   ParsedJson::iterator pjh(*pj);
+
   return simdjsonnode::makeJSONObject(env, pjh).As<Napi::Object>();
 }
 
@@ -108,7 +109,7 @@ Napi::Object simdjsonnode::ParseWrapped(const Napi::CallbackInfo& info) {
   return json;
 }
 
-Napi::Object simdjsonnode::ParseFastWrapped(const Napi::CallbackInfo& info) {
+Napi::Object simdjsonnode::LazyParseWrapped(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   std::string jstr = info[0].As<Napi::String>();
   ParsedJson pj = build_parsed_json(jstr);
@@ -131,7 +132,7 @@ Napi::Object simdjsonnode::Init(Napi::Env env, Napi::Object exports) {
   exports.Set("hasAVX2", Napi::Function::New(env, simdjsonnode::HasAVX2Wrapped));
   exports.Set("isValid", Napi::Function::New(env, simdjsonnode::IsValidWrapped));
   exports.Set("parse", Napi::Function::New(env, simdjsonnode::ParseWrapped));
-  exports.Set("parseFast", Napi::Function::New(env, simdjsonnode::ParseFastWrapped));
+  exports.Set("lazyParse", Napi::Function::New(env, simdjsonnode::LazyParseWrapped));
   return exports;
 }
 
