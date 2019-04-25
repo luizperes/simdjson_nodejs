@@ -115,8 +115,36 @@ Napi::Value simdjsonnode::findKeyPath(Napi::Env env, std::vector<std::string> su
   if (subpaths.empty()) return simdjsonnode::makeJSONObject(env, pjh).As<Napi::Object>();
   std::string subpath = subpaths.front();
   subpaths.erase(subpaths.begin());
-  bool isAlpha = !isNumber(subpath);
-  // TODO: finishing parsing
+  bool isArray = isNumber(subpath);
+  bool found = false;
+  if (!(pjh.is_array() && isArray) && !pjh.is_object()) {
+    Napi::Error::New(env, "Invalid keypath").ThrowAsJavaScriptException();
+  }
+  if (pjh.is_object()) {
+    if (pjh.down()) {
+      do {
+        if (subpath.compare(pjh.get_string()) == 0) {
+          found = true;
+          break;
+        }
+      } while (pjh.next());
+    }
+  } else if (pjh.is_array()) {
+    if (pjh.down()) {
+      int n = std::stoi(subpath);
+      do {
+        if (n == 0) {
+          found = true;
+          break;
+        }
+        n--;
+      } while (pjh.next());
+    }
+  }
+  if (!found) {
+    std::string error = "Could not find subpath " + subpath;
+    Napi::Error::New(env, error).ThrowAsJavaScriptException();
+  }
   return findKeyPath(env, subpaths, pjh);
 }
 
