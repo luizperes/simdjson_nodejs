@@ -91,17 +91,17 @@ Napi::Value simdjsonnode::makeJSONObject(Napi::Env env, ParsedJson::iterator & p
   return v;
 }
 
-std::pair<int, std::string> simdjsonnode::getNextSubpath(std::string path) {
-  int begin = 0;
-  int end = 0;
-  for(std::string::size_type i = 0; i < path.size(); ++i) {
-    end++;
-    if (path[i] == '.' || path[i] == '[' || path[i] == ']') {
-      break;
+static std::vector<std::string> parseKeyPath(std::string str) {
+    char * cstr = const_cast<char *>(str.c_str());
+    char * current;
+    std::string delimiters = ".[]";
+    std::vector<std::string> arr;
+    current = strtok(cstr, delimiters.c_str());
+    while(current != NULL) {
+        arr.push_back(current);
+        current=strtok(NULL, delimiters.c_str());
     }
-  }
-  if (begin == end) return std::make_pair(-1, "");
-  return std::make_pair(end, path.substr(0, end - 1));
+    return arr;
 }
 
 static bool isNumber(std::string s) {
@@ -111,16 +111,13 @@ static bool isNumber(std::string s) {
   return true;
 }
 
-ParsedJson::iterator & simdjsonnode::findKeyPath(Napi::Env env, std::string path, ParsedJson::iterator & pjh) {
-  std::pair<int, std::string> subpath(getNextSubpath(path));
-  bool isObj = !isNumber(subpath.second);
-  int next = subpath.first;
-  if (isObj) {
-    if (pjh.down()) {
-      // TODO: finish writing the code that finds the keypath
-    }
-  }
-  return pjh;
+Napi::Value simdjsonnode::findKeyPath(Napi::Env env, std::vector<std::string> subpaths, ParsedJson::iterator & pjh) {
+  if (subpaths.empty()) return simdjsonnode::makeJSONObject(env, pjh).As<Napi::Object>();
+  std::string subpath = subpaths.front();
+  subpaths.erase(subpaths.begin());
+  bool isAlpha = !isNumber(subpath);
+  // TODO: finishing parsing
+  return findKeyPath(env, subpaths, pjh);
 }
 
 Napi::Value simdjsonnode::ValueForKeyPathWrapped(const Napi::CallbackInfo& info) {
@@ -130,8 +127,7 @@ Napi::Value simdjsonnode::ValueForKeyPathWrapped(const Napi::CallbackInfo& info)
   Napi::External<ParsedJson> buffer = _this.Get("buffer").As<Napi::External<ParsedJson>>();
   ParsedJson * pj = buffer.Data();
   ParsedJson::iterator pjh(*pj);
-  ParsedJson::iterator pjhh(simdjsonnode::findKeyPath(env, path, pjh));
-  return simdjsonnode::makeJSONObject(env, pjhh).As<Napi::Object>();
+  return simdjsonnode::findKeyPath(env, parseKeyPath(path), pjh);
 }
 
 Napi::Object simdjsonnode::ParseWrapped(const Napi::CallbackInfo& info) {

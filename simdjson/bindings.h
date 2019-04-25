@@ -14,8 +14,7 @@ namespace simdjsonnode {
 
   Napi::Object LazyParseWrapped(const Napi::CallbackInfo& info);
   Napi::Value ValueForKeyPathWrapped(const Napi::CallbackInfo& info);
-  std::pair<int, std::string> getNextSubpath(std::string path);
-  ParsedJson::iterator & findKeyPath(Napi::Env env, std::string path, ParsedJson::iterator & pjh);
+  Napi::Value findKeyPath(Napi::Env env, std::vector<std::string> subpaths, ParsedJson::iterator & pjh);
 
 
   Napi::Object Init(Napi::Env env, Napi::Object exports);
