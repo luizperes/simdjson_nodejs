@@ -19,88 +19,88 @@ const twitter = fs.readFileSync('../jsonexamples/twitter.json', 'utf-8');
 const twitterescaped = fs.readFileSync('../jsonexamples/twitterescaped.json', 'utf-8');
 const update_center = fs.readFileSync('../jsonexamples/update-center.json', 'utf-8');
 suite.add('apache_builds.json#simdjson', function() {
-    simdjson.isValid(apache_builds);
+    simdjson.lazyParse(apache_builds);
   })
   .add('apache_builds.json#JSON', function() {
-    json.isValid(apache_builds);
+    JSON.parse(apache_builds);
   })
   .add('canada.json#simdjson', function() {
-    simdjson.isValid(canada);
+    simdjson.lazyParse(canada);
   })
   .add('canada.json#JSON', function() {
-    json.isValid(canada);
+    JSON.parse(canada);
   })
   .add('citm_catalog.json#simdjson', function() {
-    simdjson.isValid(citm_catalog);
+    simdjson.lazyParse(citm_catalog);
   })
   .add('citm_catalog.json#JSON', function() {
-    json.isValid(citm_catalog);
+    JSON.parse(citm_catalog);
   })
   .add('github_events.json#simdjson', function() {
-    simdjson.isValid(github_events);
+    simdjson.lazyParse(github_events);
   })
   .add('github_events.json#JSON', function() {
-    json.isValid(github_events);
+    JSON.parse(github_events);
   })
   .add('gsoc-2018.json#simdjson', function() {
-    simdjson.isValid(gsoc_2018);
+    simdjson.lazyParse(gsoc_2018);
   })
   .add('gsoc-2018.json#JSON', function() {
-    json.isValid(gsoc_2018);
+    JSON.parse(gsoc_2018);
   })
   .add('instruments.json#simdjson', function() {
-    simdjson.isValid(instruments);
+    simdjson.lazyParse(instruments);
   })
   .add('instruments.json#JSON', function() {
-    json.isValid(instruments);
+    JSON.parse(instruments);
   })
   .add('marine-ik.json#simdjson', function() {
-    simdjson.isValid(marine_ik);
+    simdjson.lazyParse(marine_ik);
   })
   .add('marine-ik.json#JSON', function() {
-    json.isValid(marine_ik);
+    JSON.parse(marine_ik);
   })
   .add('mesh.json#simdjson', function() {
-    simdjson.isValid(mesh);
+    simdjson.lazyParse(mesh);
   })
   .add('mesh.json#JSON', function() {
-    json.isValid(mesh);
+    JSON.parse(mesh);
   })
   .add('mesh.pretty.json#simdjson', function() {
-    simdjson.isValid(mesh_pretty);
+    simdjson.lazyParse(mesh_pretty);
   })
   .add('mesh.pretty.json#JSON', function() {
-    json.isValid(mesh_pretty);
+    JSON.parse(mesh_pretty);
   })
   .add('numbers.json#simdjson', function() {
-    simdjson.isValid(numbers);
+    simdjson.lazyParse(numbers);
   })
   .add('numbers.json#JSON', function() {
-    json.isValid(numbers);
+    JSON.parse(numbers);
   })
   .add('random.json#simdjson', function() {
-    simdjson.isValid(random);
+    simdjson.lazyParse(random);
   })
   .add('random.json#JSON', function() {
-    json.isValid(random);
+    JSON.parse(random);
   })
   .add('twitter.json#simdjson', function() {
-    simdjson.isValid(twitter);
+    simdjson.lazyParse(twitter);
   })
   .add('twitter.json#JSON', function() {
-    json.isValid(twitter);
+    JSON.parse(twitter);
   })
   .add('twitterescaped.json#simdjson', function() {
-    simdjson.isValid(twitterescaped);
+    simdjson.lazyParse(twitterescaped);
   })
   .add('twitterescaped.json#JSON', function() {
-    json.isValid(twitterescaped);
+    JSON.parse(twitterescaped);
   })
   .add('update-center.json#simdjson', function() {
-    simdjson.isValid(update_center);
+    simdjson.lazyParse(update_center);
   })
   .add('update-center.json#JSON', function() {
-    json.isValid(update_center);
+    JSON.parse(update_center);
   })
   .on('cycle', function(event) {
     console.log(String(event.target) + " => " + String(event.target.times.period)) + " secs";
