@@ -118,15 +118,18 @@ Napi::Value simdjsonnode::findKeyPath(Napi::Env env, std::vector<std::string> su
   bool isArray = isNumber(subpath);
   bool found = false;
   if (!(pjh.is_array() && isArray) && !pjh.is_object()) {
-    Napi::Error::New(env, "Invalid keypath").ThrowAsJavaScriptException();
+    std::string error = "Invalid keypath " + subpath;
+    Napi::Error::New(env, error).ThrowAsJavaScriptException();
   }
   if (pjh.is_object()) {
     if (pjh.down()) {
       do {
         if (subpath.compare(pjh.get_string()) == 0) {
           found = true;
+          pjh.next();
           break;
         }
+        pjh.next(); // need to do twice for the key-path
       } while (pjh.next());
     }
   } else if (pjh.is_array()) {
