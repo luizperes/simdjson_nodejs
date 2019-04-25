@@ -16,7 +16,18 @@ const jsonString = ...
 const valid = simdjson.isValid(jsonString); // true
 ```
 
+##### Parsing a JSON string (lazily)
+_Obs.: Please see that the overhead of converting a C++ object to a JS object might make the parsing time in the NodeJS slower for the simdjson. Therefore, parsing it lazily is preferrable. For more information check issue #5._
+```Javascript
+const simdjson = require('simdjson');
+
+const jsonString = ...
+const JSONbuffer = simdjson.lazyParse(jsonString); // external (C++) parsed JSON object
+console.log(JSONbuffer.valueForKeyPath("foo.bar[2].example"));
+```
+
 ##### Parsing a JSON string
+_Obs.: Parsing a JSON lazily is preferrable._
 ```Javascript
 const simdjson = require('simdjson');
 
@@ -108,3 +119,4 @@ Please refer to the the original repository benchmarks for more information abou
   - `mkdir build && cd build`
   - `cmake ..`
   - `make`
+
