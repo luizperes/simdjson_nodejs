@@ -132,7 +132,7 @@ Napi::Value simdjsonnode::findKeyPath(Napi::Env env, std::vector<std::string> su
         pjh.next(); // need to do twice for the key-path
       } while (pjh.next());
     }
-  } else if (pjh.is_array()) {
+  } else if (pjh.is_array() && isArray) {
     if (pjh.down()) {
       int n = std::stoi(subpath);
       do {
