@@ -32,7 +32,7 @@
             "xcode_settings": {
               "GCC_ENABLE_SSE42_EXTENSIONS": "YES",
               "CLANG_X86_VECTOR_INSTRUCTIONS": "avx2",
-              "OTHER_CFLAGS": ["-mavx2", "-mavx", "-mbmi", "-mpclmul"],
+              "OTHER_CFLAGS": ["-mavx2", "-mavx", "-mbmi", "-mpclmul", "-std=c++17"],
             },
             "msvs_settings": {
               "VCCLCompilerTool": {
