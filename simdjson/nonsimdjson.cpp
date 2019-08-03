@@ -1,5 +1,5 @@
-#ifndef __AVX2__
-#include "nonavx2.h"
+#if !defined __AVX2__ || !defined __SSE42__
+#include "nonsimdjson.h"
 
 Napi::Boolean simdjsonnode::HasAVX2Wrapped(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();

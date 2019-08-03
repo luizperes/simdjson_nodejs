@@ -1,4 +1,4 @@
-#ifdef __AVX2__
+#if defined __AVX2__ || defined __SSE42__
 #include <napi.h>
 #include "src/simdjson.h"
 

@@ -1,4 +1,4 @@
-#ifdef __AVX2__
+#if defined __AVX2__ || defined __SSE42__
 #include "bindings.h"
 
 Napi::Boolean simdjsonnode::HasAVX2Wrapped(const Napi::CallbackInfo& info) {

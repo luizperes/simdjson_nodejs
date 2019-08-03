@@ -7,7 +7,7 @@
       "cflags_cc": ["-O3", "-std=c++17"],
       "sources": [
         "simdjson/main.cpp",
-        "simdjson/nonavx2.cpp"
+        "simdjson/nonsimdjson.cpp"
       ],
       "include_dirs": ["<!@(node -p \"require('node-addon-api').include\")"],
       "defines": ["NAPI_DISABLE_CPP_EXCEPTIONS"]
