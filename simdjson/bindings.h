@@ -4,8 +4,6 @@
 namespace simdjsonnode {
   using namespace simdjson;
 
-  Napi::Boolean HasAVX2Wrapped(const Napi::CallbackInfo& info);
-
   bool isValid(std::string p);
   Napi::Boolean IsValidWrapped(const Napi::CallbackInfo& info);
 
