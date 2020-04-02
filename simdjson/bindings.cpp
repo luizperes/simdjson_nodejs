@@ -1,4 +1,3 @@
-#if defined __AVX2__ || defined __SSE42__
 #include "bindings.h"
 
 Napi::Boolean simdjsonnode::HasAVX2Wrapped(const Napi::CallbackInfo& info) {
@@ -194,5 +193,3 @@ Napi::Object simdjsonnode::Init(Napi::Env env, Napi::Object exports) {
   exports.Set("lazyParse", Napi::Function::New(env, simdjsonnode::LazyParseWrapped));
   return exports;
 }
-
-#endif
