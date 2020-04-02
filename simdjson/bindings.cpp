@@ -1,10 +1,4 @@
-#if defined __AVX2__ || defined __SSE42__
 #include "bindings.h"
-
-Napi::Boolean simdjsonnode::HasAVX2Wrapped(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
-  return Napi::Boolean::New(env, true);
-}
 
 bool simdjsonnode::isValid(std::string p) {
   ParsedJson pj = build_parsed_json(p);
@@ -188,11 +182,8 @@ Napi::Object simdjsonnode::LazyParseWrapped(const Napi::CallbackInfo& info) {
 }
 
 Napi::Object simdjsonnode::Init(Napi::Env env, Napi::Object exports) {
-  exports.Set("hasAVX2", Napi::Function::New(env, simdjsonnode::HasAVX2Wrapped));
   exports.Set("isValid", Napi::Function::New(env, simdjsonnode::IsValidWrapped));
   exports.Set("parse", Napi::Function::New(env, simdjsonnode::ParseWrapped));
   exports.Set("lazyParse", Napi::Function::New(env, simdjsonnode::LazyParseWrapped));
   return exports;
 }
-
-#endif

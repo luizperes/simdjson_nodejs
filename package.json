@@ -27,9 +27,9 @@
   "homepage": "https://github.com/luizperes/simdjson_nodejs#readme",
   "devDependencies": {
     "benchmark": "^2.1.4",
-    "node-gyp": "^4.0.0"
+    "node-gyp": "^6.1.0"
   },
   "dependencies": {
-    "node-addon-api": "^1.6.2"
+    "node-addon-api": "^2.0.0"
   }
 }
