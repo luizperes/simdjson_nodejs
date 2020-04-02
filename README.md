@@ -8,11 +8,14 @@ The installation can be done in one step with `npm`:
 
 ## Usage
 
+##### API Documentation
+Please refer to the [API Documentation](https://github.com/luizperes/simdjson_nodejs/blob/master/Documentation.md) to have a better understanding of NodeJS bindings for `simdjson`.
+
 ##### Check if a JSON string is valid:
 ```Javascript
 const simdjson = require('simdjson');
 
-const jsonString = ...
+const jsonString = "{ \"answer\": 42 }";
 const valid = simdjson.isValid(jsonString); // true
 ```
 
@@ -21,9 +24,16 @@ _Obs.: Please see that the overhead of converting a C++ object to a JS object mi
 ```Javascript
 const simdjson = require('simdjson');
 
-const jsonString = ...
+const jsonString = "{   \
+  \"foo\": {            \
+    \"bar\": [          \
+      \"baz\": 0,       \
+      \"baz\": 42       \
+    ]                   \
+  }                     \
+}"
 const JSONbuffer = simdjson.lazyParse(jsonString); // external (C++) parsed JSON object
-console.log(JSONbuffer.valueForKeyPath("foo.bar[2].example"));
+console.log(JSONbuffer.valueForKeyPath("foo.bar[1].baz")); // 42
 ```
 
 ##### Parsing a JSON string
@@ -31,7 +41,14 @@ _Obs.: Parsing a JSON lazily is preferrable._
 ```Javascript
 const simdjson = require('simdjson');
 
-const jsonString = ...
+const jsonString = "{   \
+  \"foo\": {            \
+    \"bar\": [          \
+      \"baz\": 0,       \
+      \"baz\": 42       \
+    ]                   \
+  }                     \
+}"
 const parsedJSON = simdjson.parse(jsonString); // parsed JSON object
 ```
 
@@ -106,17 +123,4 @@ You may run the benchmarks by running the commands:
 
 ###### Observation:
 Please refer to the the original repository benchmarks for more information about the performance of *simdjson* [https://github.com/lemire/simdjson](https://github.com/lemire/simdjson).
-
-
-### AVX2
-
-*simdjson* will choose the default JS `JSON` library in case that your machine does not have AVX2 support. Therefore, it is required AVX2 support in order to use all of its powers. You may want to check whether your OS/processor supports it:
-
-- OS X: `sysctl -a | grep machdep.cpu.leaf7_features`
-- Linux: `grep avx2 /proc/cpuinfo`
-- Windows:
-  - `clone https://github.com/Mysticial/FeatureDetector`
-  - `mkdir build && cd build`
-  - `cmake ..`
-  - `make`
 
