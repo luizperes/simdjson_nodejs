@@ -3,6 +3,9 @@
   "version": "0.2.91",
   "description": "Parsing gigabytes of JSON per second",
   "main": "index.js",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "gypfile": true,
   "scripts": {
     "build": "node-gyp rebuild",
