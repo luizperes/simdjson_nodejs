@@ -1,8 +1,7 @@
 #include "bindings.h"
 
-bool simdjsonnode::isValid(std::string p) {
-  ParsedJson pj = build_parsed_json(p);
-  return pj.is_valid();
+bool simdjsonnode::isValid(std::string json) {
+  return !dom::parser().parse(json).error();
 }
 
 Napi::Boolean simdjsonnode::IsValidWrapped(const Napi::CallbackInfo& info) {
@@ -12,77 +11,44 @@ Napi::Boolean simdjsonnode::IsValidWrapped(const Napi::CallbackInfo& info) {
   return returnValue;
 }
 
-Napi::Object simdjsonnode::parse(Napi::Env env, std::string p) {
-  ParsedJson pj = build_parsed_json(p);
-  if (!pj.is_valid()) {
-    Napi::Error::New(env, "Invalid JSON Exception").ThrowAsJavaScriptException();
-  }
-  ParsedJson::Iterator pjh(pj);
-  return simdjsonnode::makeJSONObject(env, pjh).As<Napi::Object>();
-}
-
-Napi::Value simdjsonnode::makeJSONObject(Napi::Env env, ParsedJson::Iterator & pjh) {
+Napi::Value simdjsonnode::makeJSONObject(Napi::Env env, dom::element element) {
   Napi::Value v;
-  if (pjh.is_object()) {
-    Napi::Object obj = Napi::Object::New(env); // {
-    if (pjh.down()) {
-      // must be a string
-      Napi::String key = Napi::String::New(env, pjh.get_string());
-      // :
-      pjh.next();
-      Napi::Value value = simdjsonnode::makeJSONObject(env, pjh); // let us recurse
-      obj.Set(key, value);
-      while (pjh.next()) { // ,
-        key = Napi::String::New(env, pjh.get_string());
-        pjh.next();
-        // :
-        value = simdjsonnode::makeJSONObject(env, pjh); // let us recurse
-        obj.Set(key, value);
+  switch (element.type()) {
+    case dom::element_type::ARRAY: {
+      Napi::Array arr = Napi::Array::New(env);
+      std::size_t i = 0;
+      for (dom::element child : dom::array(element)) {
+        arr.Set(i, makeJSONObject(env, child));
+        i++;
       }
-      pjh.up();
+      return arr;
     }
-    v = obj; // }
-  } else if (pjh.is_array()) {
-    std::vector<Napi::Value> arr;
-    if (pjh.down()) {
-      // [
-      Napi::Value value = simdjsonnode::makeJSONObject(env, pjh); // let us recurse
-      arr.push_back(value);
-      while (pjh.next()) { // ,
-        value = simdjsonnode::makeJSONObject(env, pjh); // let us recurse
-        arr.push_back(value);
+    case dom::element_type::OBJECT: {
+      Napi::Object obj = Napi::Object::New(env); // {
+      for (auto field : dom::object(element)) {
+        // TODO not 8-bit clean, but likely faster than making a new JS string ... figure out how to
+        // do this without allocating a whole new std::string
+        obj.Set(field.key.data(), makeJSONObject(env, field.value));
       }
-      pjh.up();
+      return obj;
     }
-    // ]
-    Napi::Array array = Napi::Array::New(env, arr.size());
-    for (std::size_t i{ 0 }; i < arr.size(); i++) array.Set(i, arr[i]);
-    v = array;
-  } else if (pjh.is_string()) {
-    v = Napi::String::New(env, pjh.get_string());
-  } else if (pjh.is_double()) {
-    v = Napi::Number::New(env, pjh.get_double());
-  } else if (pjh.is_integer()) {
-    v = Napi::Number::New(env, pjh.get_integer());
-  } else {
-    switch (pjh.get_type()) {
-      case 't':  {
-        v = Napi::Boolean::New(env, true);
-        break;
-      }
-      case 'f': {
-        v = Napi::Boolean::New(env, false);
-        break;
-      }
-      case 'n': {
-        v = env.Null();
-        break;
-      }
-      default : break;
+    case dom::element_type::STRING: {
+      std::string_view str = element;
+      return Napi::String::New(env, str.data(), str.length());
     }
+    case dom::element_type::INT64:
+      return Napi::Value::From<int64_t>(env, element);
+    case dom::element_type::UINT64:
+      return Napi::Value::From<uint64_t>(env, element);
+    case dom::element_type::DOUBLE:
+      return Napi::Value::From<double>(env, element);
+    case dom::element_type::BOOL:
+      return Napi::Value::From<bool>(env, element);
+    case dom::element_type::NULL_VALUE:
+      return env.Null();
   }
-  
-  return v;
+  Napi::Error::New(env, "Internal error: Unexpected JSON type from simdjson").ThrowAsJavaScriptException();
+  return env.Null();
 }
 
 static std::vector<std::string> parseKeyPath(std::string str) {
@@ -105,80 +71,74 @@ static bool isNumber(std::string s) {
   return true;
 }
 
-Napi::Value simdjsonnode::findKeyPath(Napi::Env env, std::vector<std::string> subpaths, ParsedJson::Iterator & pjh) {
-  if (subpaths.empty()) return simdjsonnode::makeJSONObject(env, pjh).As<Napi::Object>();
+Napi::Value simdjsonnode::findKeyPath(Napi::Env env, std::vector<std::string> subpaths, dom::element element) {
+  if (subpaths.empty()) return makeJSONObject(env, element).As<Napi::Object>();
   std::string subpath = subpaths.front();
   subpaths.erase(subpaths.begin());
-  bool isArray = isNumber(subpath);
-  bool found = false;
-  if (!(pjh.is_array() && isArray) && !pjh.is_object()) {
-    std::string error = "Invalid keypath " + subpath;
-    Napi::Error::New(env, error).ThrowAsJavaScriptException();
-  }
-  if (pjh.is_object()) {
-    if (pjh.down()) {
-      do {
-        if (subpath.compare(pjh.get_string()) == 0) {
-          found = true;
-          pjh.next();
-          break;
-        }
-        pjh.next(); // need to do twice for the key-path
-      } while (pjh.next());
+  switch (element.type()) {
+    case dom::element_type::ARRAY: {
+      if (!isNumber(subpath)) {
+        std::string error = "Invalid keypath " + subpath + ": must be a number when accessing an array";
+        Napi::Error::New(env, error).ThrowAsJavaScriptException();
+      }
+      return findKeyPath(env, subpaths, element.at(std::stoi(subpath)));
     }
-  } else if (pjh.is_array() && isArray) {
-    if (pjh.down()) {
-      int n = std::stoi(subpath);
-      do {
-        if (n == 0) {
-          found = true;
-          break;
-        }
-        n--;
-      } while (pjh.next());
+    case dom::element_type::OBJECT: {
+      return findKeyPath(env, subpaths, element.at_key(subpath));
+    }
+    default: {
+      std::string error = "Invalid keypath " + subpath + ": keys only work on arrays and objects";
+      Napi::Error::New(env, error).ThrowAsJavaScriptException();
+      return env.Null();
     }
   }
-  if (!found) {
-    std::string error = "Could not find subpath " + subpath;
-    Napi::Error::New(env, error).ThrowAsJavaScriptException();
-  }
-  return findKeyPath(env, subpaths, pjh);
 }
 
 Napi::Value simdjsonnode::ValueForKeyPathWrapped(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   std::string path = info[0].As<Napi::String>();
   Napi::Object _this = info.This().As<Napi::Object>();
-  Napi::External<ParsedJson> buffer = _this.Get("buffer").As<Napi::External<ParsedJson>>();
-  ParsedJson * pj = buffer.Data();
-  ParsedJson::Iterator pjh(*pj);
-  return simdjsonnode::findKeyPath(env, parseKeyPath(path), pjh);
+  Napi::External<dom::document> buffer = _this.Get("buffer").As<Napi::External<dom::document>>();
+  dom::document * doc = buffer.Data();
+  try {
+    return simdjsonnode::findKeyPath(env, parseKeyPath(path), doc->root());
+  } catch (simdjson_error &error) {
+    Napi::Error::New(env, error_message(error.error())).ThrowAsJavaScriptException();
+    return env.Null();
+  }
 }
 
-Napi::Object simdjsonnode::ParseWrapped(const Napi::CallbackInfo& info) {
+Napi::Value simdjsonnode::ParseWrapped(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  std::string jstr = info[0].As<Napi::String>();
-  Napi::Object json = simdjsonnode::parse(env, jstr);
-  return json;
+  std::string json = info[0].As<Napi::String>();
+  try {
+
+    dom::parser parser;
+    return makeJSONObject(env, parser.parse(json));
+
+  } catch (simdjson_error &error) {
+    Napi::Error::New(env, error_message(error.error())).ThrowAsJavaScriptException();
+    return env.Null();
+  }
 }
 
 Napi::Object simdjsonnode::LazyParseWrapped(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  std::string jstr = info[0].As<Napi::String>();
-  ParsedJson pj = build_parsed_json(jstr);
-  if (!pj.is_valid()) {
-    Napi::Error::New(env, "Invalid JSON Exception").ThrowAsJavaScriptException();
+  std::string json = info[0].As<Napi::String>();
+  dom::parser parser;
+  error_code error = parser.parse(json).error();
+  if (error) {
+    Napi::Error::New(env, error_message(error)).ThrowAsJavaScriptException();
+    return Napi::Object::New(env);
   }
-  Napi::Object json = Napi::Object::New(env);
-  Napi::String key = Napi::String::New(env, "buffer");
-  ParsedJson *pjh = new ParsedJson(std::move(pj));
-  Napi::External<ParsedJson> buffer = Napi::External<ParsedJson>::New(env, pjh,
-    [](Napi::Env /*env*/, ParsedJson * data) {
-      delete data;
+  Napi::External<dom::document> buffer = Napi::External<dom::document>::New(env, new dom::document(std::move(parser.doc)),
+    [](Napi::Env /*env*/, dom::document * doc) {
+      delete doc;
     });
-  json.Set(key, buffer);
-  json.Set("valueForKeyPath", Napi::Function::New(env, simdjsonnode::ValueForKeyPathWrapped));
-  return json;  
+  Napi::Object result = Napi::Object::New(env);
+  result.Set("buffer", buffer);
+  result.Set("valueForKeyPath", Napi::Function::New(env, simdjsonnode::ValueForKeyPathWrapped));
+  return result;  
 }
 
 Napi::Object simdjsonnode::Init(Napi::Env env, Napi::Object exports) {

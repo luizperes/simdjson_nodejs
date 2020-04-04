@@ -1,4 +1,4 @@
-/* auto-generated on Tue 31 Mar 2020 17:00:28 EDT. Do not edit! */
+/* auto-generated on Thu  2 Apr 2020 18:58:25 EDT. Do not edit! */
 #include "simdjson.h"
 
 /* used for http://dmalloc.com/ Dmalloc - Debug Malloc Library */
@@ -5591,7 +5591,6 @@ static inline uint32_t hex_to_u32_nocheck(
 // returns true if the provided byte value is a 
 // "continuing" UTF-8 value, that is, if it starts with
 // 0b10...
-[[maybe_unused]]
 static inline bool is_utf8_continuing(char c) {
   // in 2 complement's notation, values start at 0b10000 (-128)... and
   // go up to 0b11111 (-1)... so we want all values from -128 to -65 (which is 0b10111111)
@@ -7198,7 +7197,7 @@ static bool parse_float_strtod(const char *ptr, double *outDouble) {
   // can't fit in binary64. The maximal value is about  1.7976931348623157 ×
   // 10^308 It is an unimaginable large number. There will never be any piece of
   // engineering involving as many as 10^308 parts. It is estimated that there
-  // are about 10^80 atoms in the universe.  The estimate for the total number
+  // are about 10^80 atoms in the universe.  The estimate for the total number
   // of electrons is similar. Using a double-precision floating-point value, we
   // can represent easily the number of atoms in the universe. We could  also
   // represent the number of ways you can pick any three individual atoms at
@@ -8686,7 +8685,7 @@ static bool parse_float_strtod(const char *ptr, double *outDouble) {
   // can't fit in binary64. The maximal value is about  1.7976931348623157 ×
   // 10^308 It is an unimaginable large number. There will never be any piece of
   // engineering involving as many as 10^308 parts. It is estimated that there
-  // are about 10^80 atoms in the universe.  The estimate for the total number
+  // are about 10^80 atoms in the universe.  The estimate for the total number
   // of electrons is similar. Using a double-precision floating-point value, we
   // can represent easily the number of atoms in the universe. We could  also
   // represent the number of ways you can pick any three individual atoms at
@@ -10138,7 +10137,7 @@ static bool parse_float_strtod(const char *ptr, double *outDouble) {
   // can't fit in binary64. The maximal value is about  1.7976931348623157 ×
   // 10^308 It is an unimaginable large number. There will never be any piece of
   // engineering involving as many as 10^308 parts. It is estimated that there
-  // are about 10^80 atoms in the universe.  The estimate for the total number
+  // are about 10^80 atoms in the universe.  The estimate for the total number
   // of electrons is similar. Using a double-precision floating-point value, we
   // can represent easily the number of atoms in the universe. We could  also
   // represent the number of ways you can pick any three individual atoms at
@@ -11596,7 +11595,7 @@ static bool parse_float_strtod(const char *ptr, double *outDouble) {
   // can't fit in binary64. The maximal value is about  1.7976931348623157 ×
   // 10^308 It is an unimaginable large number. There will never be any piece of
   // engineering involving as many as 10^308 parts. It is estimated that there
-  // are about 10^80 atoms in the universe.  The estimate for the total number
+  // are about 10^80 atoms in the universe.  The estimate for the total number
   // of electrons is similar. Using a double-precision floating-point value, we
   // can represent easily the number of atoms in the universe. We could  also
   // represent the number of ways you can pick any three individual atoms at
