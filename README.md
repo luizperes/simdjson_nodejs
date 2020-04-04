@@ -26,14 +26,11 @@ const simdjson = require('simdjson');
 
 const jsonString = "{   \
   \"foo\": {            \
-    \"bar\": [          \
-      \"baz\": 0,       \
-      \"baz\": 42       \
-    ]                   \
+    \"bar\": [ 0, 42 ]  \
   }                     \
-}"
+}";
 const JSONbuffer = simdjson.lazyParse(jsonString); // external (C++) parsed JSON object
-console.log(JSONbuffer.valueForKeyPath("foo.bar[1].baz")); // 42
+console.log(JSONbuffer.valueForKeyPath("foo.bar[1]")); // 42
 ```
 
 ##### Parsing a JSON string
@@ -43,12 +40,9 @@ const simdjson = require('simdjson');
 
 const jsonString = "{   \
   \"foo\": {            \
-    \"bar\": [          \
-      \"baz\": 0,       \
-      \"baz\": 42       \
-    ]                   \
+    \"bar\": [ 0, 42 ]  \
   }                     \
-}"
+}";
 const parsedJSON = simdjson.parse(jsonString); // parsed JSON object
 ```
 
