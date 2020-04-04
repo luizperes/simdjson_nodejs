@@ -4,7 +4,7 @@
   "description": "Parsing gigabytes of JSON per second",
   "main": "index.js",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/@luizperes"
+    "registry": "https://registry.npmjs.org"
   },
   "gypfile": true,
   "scripts": {
