@@ -20,7 +20,7 @@ declare module "simdjson" {
   export interface JSONTape {
     /**
      * Similar to [`NSObject valueForKeyPath`](https://docs.microsoft.com/en-us/dotnet/api/foundation.nsobject.valueforkeypath?view=xamarin-ios-sdk-12)
-     * keyPath is a dot "." separated string in format x.y.0.a
+     * keyPath is a x.y or x[y] separated string in format e.g address.city.unit.0 or jobs[0].result.output
      * e.g address.city.house.0
      */
     valueForKeyPath(keyPath: string): any;
