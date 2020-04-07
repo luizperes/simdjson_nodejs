@@ -9,7 +9,7 @@ The installation can be done in one step with `npm`:
 ## Usage
 
 ##### API Documentation
-Please refer to the [API Documentation](https://github.com/luizperes/simdjson_nodejs/blob/master/Documentation.md) to have a better understanding of NodeJS bindings for `simdjson`.
+See [index.d.ts](index.d.ts) for available `simdjson` binding functions and their input/output types.
 
 ##### Check if a JSON string is valid:
 ```Javascript
