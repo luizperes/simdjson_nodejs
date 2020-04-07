@@ -1,10 +1,10 @@
 # simdjson_nodejs
-> Node.js bindings for [simdjson](https://github.com/lemire/simdjson), a gigabytes-per-second JSON parser, possibly the fastest JSON parser at the moment. *simdjson* as well as *simdjson_nodejs* work on popular platforms such as OS X, Linux, and Windows.
-
 [![tests](https://github.com/luizperes/simdjson/workflows/tests/badge.svg?branch=master)](https://github.com/luizperes/simdjson/actions)
 [![npm](https://img.shields.io/npm/v/simdjson.svg)](https://www.npmjs.com/package/simdjson)
 [![npm](https://img.shields.io/npm/dm/simdjson.svg)](https://www.npmjs.com/package/simdjson)
 [![npm](https://img.shields.io/npm/l/simdjson.svg)](https://github.com/luizperes/simdjson/blob/master/LICENCE)
+
+> Node.js bindings for [simdjson](https://github.com/lemire/simdjson), a gigabytes-per-second JSON parser, possibly the fastest JSON parser at the moment. *simdjson* as well as *simdjson_nodejs* work on popular platforms such as OS X, Linux, and Windows.
 
 ## Installation
 The installation can be done in one step with `npm`:
