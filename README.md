@@ -1,8 +1,8 @@
 # simdjson_nodejs
-[![tests](https://github.com/luizperes/simdjson/workflows/tests/badge.svg?branch=master)](https://github.com/luizperes/simdjson/actions)
+[![tests](https://github.com/luizperes/simdjson_nodejs/workflows/tests/badge.svg?branch=master)](https://github.com/luizperes/simdjson_nodejs/actions)
 [![npm](https://img.shields.io/npm/v/simdjson.svg)](https://www.npmjs.com/package/simdjson)
 [![npm](https://img.shields.io/npm/dm/simdjson.svg)](https://www.npmjs.com/package/simdjson)
-[![npm](https://img.shields.io/npm/l/simdjson.svg)](https://github.com/luizperes/simdjson/blob/master/LICENCE)
+[![npm](https://img.shields.io/npm/l/simdjson.svg)](https://github.com/luizperes/simdjson_nodejs/blob/master/LICENCE)
 
 > Node.js bindings for [simdjson](https://github.com/lemire/simdjson), a gigabytes-per-second JSON parser, possibly the fastest JSON parser at the moment. *simdjson* as well as *simdjson_nodejs* work on popular platforms such as OS X, Linux, and Windows.
 
