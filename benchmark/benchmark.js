@@ -1,124 +1,57 @@
-const Benchmark = require('benchmark');
-const suite = new Benchmark.Suite;
-const fs = require('fs');
-const json = require('./is_valid');
-const simdjson = require('../index.js');
+const Benchmark = require(`benchmark`);
+const fs = require(`fs`);
+const zlib = require(`zlib`);
+const simdjson = require(`../index.js`);
 
-const apache_builds = fs.readFileSync('../jsonexamples/apache_builds.json', 'utf-8');
-const canada = fs.readFileSync('../jsonexamples/canada.json', 'utf-8');
-const citm_catalog = fs.readFileSync('../jsonexamples/citm_catalog.json', 'utf-8');
-const github_events = fs.readFileSync('../jsonexamples/github_events.json', 'utf-8');
-const gsoc_2018 = fs.readFileSync('../jsonexamples/gsoc-2018.json', 'utf-8');
-const instruments = fs.readFileSync('../jsonexamples/instruments.json', 'utf-8');
-const marine_ik = fs.readFileSync('../jsonexamples/marine_ik.json', 'utf-8');
-const mesh = fs.readFileSync('../jsonexamples/mesh.json', 'utf-8');
-const mesh_pretty = fs.readFileSync('../jsonexamples/mesh.pretty.json', 'utf-8');
-const numbers = fs.readFileSync('../jsonexamples/numbers.json', 'utf-8');
-const random = fs.readFileSync('../jsonexamples/random.json', 'utf-8');
-const twitter = fs.readFileSync('../jsonexamples/twitter.json', 'utf-8');
-const twitterescaped = fs.readFileSync('../jsonexamples/twitterescaped.json', 'utf-8');
-const update_center = fs.readFileSync('../jsonexamples/update-center.json', 'utf-8');
-suite.add('apache_builds.json#simdjson', function() {
-    simdjson.lazyParse(apache_builds);
+const examplePath = `${__dirname}/../jsonexamples`;
+const jsonExamples = {
+  apache_builds: fs.readFileSync(`${examplePath}/apache_builds.json`, `utf-8`),
+  canada: fs.readFileSync(`${examplePath}/canada.json`, `utf-8`),
+  citm_catalog: fs.readFileSync(`${examplePath}/citm_catalog.json`, `utf-8`),
+  github_events: fs.readFileSync(`${examplePath}/github_events.json`, `utf-8`),
+  gsoc_2018: fs.readFileSync(`${examplePath}/gsoc-2018.json`, `utf-8`),
+  instruments: fs.readFileSync(`${examplePath}/instruments.json`, `utf-8`),
+  marine_ik: fs.readFileSync(`${examplePath}/marine_ik.json`, `utf-8`),
+  mesh_pretty: fs.readFileSync(`${examplePath}/mesh.pretty.json`, `utf-8`),
+  mesh: fs.readFileSync(`${examplePath}/mesh.json`, `utf-8`),
+  numbers: fs.readFileSync(`${examplePath}/numbers.json`, `utf-8`),
+  random: fs.readFileSync(`${examplePath}/random.json`, `utf-8`),
+  // 190MB file, compressed to 21MB
+  sf_citylots: zlib.gunzipSync(fs.readFileSync(`${examplePath}/sf_citylots.json.gz`)).toString(),
+  twitter: fs.readFileSync(`${examplePath}/twitter.json`, `utf-8`),
+  twitterescaped: fs.readFileSync(`${examplePath}/twitterescaped.json`, `utf-8`),
+  update_center: fs.readFileSync(`${examplePath}/update-center.json`, `utf-8`),
+}
+
+const suite = new Benchmark.Suite();
+
+for (const [fileName, jsonStr] of Object.entries(jsonExamples)) {
+  suite.add(`${fileName}.json#simdjson`, function(){
+    simdjson.lazyParse(jsonStr);
   })
-  .add('apache_builds.json#JSON', function() {
-    JSON.parse(apache_builds);
+  suite.add(`${fileName}.json#JSON`, function(){
+    JSON.parse(jsonStr);
   })
-  .add('canada.json#simdjson', function() {
-    simdjson.lazyParse(canada);
+}
+
+suite
+  .on(`cycle`, function(event) {
+    console.log(`${event.target} => ${(event.target.times.period * 1000).toFixed(3)}ms`)
   })
-  .add('canada.json#JSON', function() {
-    JSON.parse(canada);
-  })
-  .add('citm_catalog.json#simdjson', function() {
-    simdjson.lazyParse(citm_catalog);
-  })
-  .add('citm_catalog.json#JSON', function() {
-    JSON.parse(citm_catalog);
-  })
-  .add('github_events.json#simdjson', function() {
-    simdjson.lazyParse(github_events);
-  })
-  .add('github_events.json#JSON', function() {
-    JSON.parse(github_events);
-  })
-  .add('gsoc-2018.json#simdjson', function() {
-    simdjson.lazyParse(gsoc_2018);
-  })
-  .add('gsoc-2018.json#JSON', function() {
-    JSON.parse(gsoc_2018);
-  })
-  .add('instruments.json#simdjson', function() {
-    simdjson.lazyParse(instruments);
-  })
-  .add('instruments.json#JSON', function() {
-    JSON.parse(instruments);
-  })
-  .add('marine-ik.json#simdjson', function() {
-    simdjson.lazyParse(marine_ik);
-  })
-  .add('marine-ik.json#JSON', function() {
-    JSON.parse(marine_ik);
-  })
-  .add('mesh.json#simdjson', function() {
-    simdjson.lazyParse(mesh);
-  })
-  .add('mesh.json#JSON', function() {
-    JSON.parse(mesh);
-  })
-  .add('mesh.pretty.json#simdjson', function() {
-    simdjson.lazyParse(mesh_pretty);
-  })
-  .add('mesh.pretty.json#JSON', function() {
-    JSON.parse(mesh_pretty);
-  })
-  .add('numbers.json#simdjson', function() {
-    simdjson.lazyParse(numbers);
-  })
-  .add('numbers.json#JSON', function() {
-    JSON.parse(numbers);
-  })
-  .add('random.json#simdjson', function() {
-    simdjson.lazyParse(random);
-  })
-  .add('random.json#JSON', function() {
-    JSON.parse(random);
-  })
-  .add('twitter.json#simdjson', function() {
-    simdjson.lazyParse(twitter);
-  })
-  .add('twitter.json#JSON', function() {
-    JSON.parse(twitter);
-  })
-  .add('twitterescaped.json#simdjson', function() {
-    simdjson.lazyParse(twitterescaped);
-  })
-  .add('twitterescaped.json#JSON', function() {
-    JSON.parse(twitterescaped);
-  })
-  .add('update-center.json#simdjson', function() {
-    simdjson.lazyParse(update_center);
-  })
-  .add('update-center.json#JSON', function() {
-    JSON.parse(update_center);
-  })
-  .on('cycle', function(event) {
-    console.log(String(event.target) + " => " + String(event.target.times.period)) + " secs";
-  })
-  .on('complete', function() {
-    console.log("|      filename     |   JSON file    |   simdjson file |");
-    console.log("| :---------------: | :------------: | :-------------: |");
+  .on(`complete`, function() {
+    console.log(``);
+    console.log(`| filename | filesize (MB) | JSON.parse (ms) | simdjson.parse (ms) | X faster |`);
+    console.log(`| :------- | ------------: | --------------: | ------------------: | -------: |`);
+
     const benches = this.filter(() => true);
     for (var i = 0; i < benches.length; i+=2) {
-      var str = '| ';
-      str +=  String(benches[i + 1].name.split('#')[0]) + '.json';
-      str += ' | ';
-      str +=  String(benches[i + 1].times.period);
-      str += ' | ';
-      str +=  String(benches[i].times.period);
-      str += ' |';
-      console.log(str);
+      const fileName = benches[i].name.split(`#`)[0];
+      const fileSize = Buffer.byteLength(jsonExamples[fileName.split(`.`)[0]]) / 1e6;
+      const simdParsePeriod = benches[i].times.period * 1000;
+      const jsonParsePeriod = benches[i + 1].times.period * 1000;
+      const xFaster = jsonParsePeriod / simdParsePeriod;
+      console.log(`| ${fileName} | ${fileSize.toFixed(2)} | ${jsonParsePeriod.toFixed(3)} | ${simdParsePeriod.toFixed(3)} | ${xFaster.toFixed(2)} |`);
     }
   })
-  .run({ 'async': false });
+  .run({async: false });
 
