@@ -9,6 +9,7 @@
   },
   "gypfile": true,
   "scripts": {
+    "benchmark": "node benchmark/benchmark.js",
     "build": "node-gyp rebuild",
     "clean": "node-gyp clean",
     "test": "mocha tests/*.js"
