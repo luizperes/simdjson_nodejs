@@ -3,13 +3,15 @@
   "version": "0.3.10",
   "description": "Parsing gigabytes of JSON per second",
   "main": "index.js",
+  "types": "index.d.ts",
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
   },
   "gypfile": true,
   "scripts": {
     "build": "node-gyp rebuild",
-    "clean": "node-gyp clean"
+    "clean": "node-gyp clean",
+    "test": "mocha tests/*.js"
   },
   "repository": {
     "type": "git",
@@ -30,6 +32,7 @@
   "homepage": "https://github.com/luizperes/simdjson_nodejs#readme",
   "devDependencies": {
     "benchmark": "^2.1.4",
+    "mocha": "7.1.0",
     "node-gyp": "^6.1.0"
   },
   "dependencies": {
