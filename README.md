@@ -64,23 +64,25 @@ npm install
 npm run benchmark
 ```
 
-| filename | filesize (MB) | JSON.parse (ms) | simdjson.parse (ms) | X faster |
-| :------- | ------------: | --------------: | ------------------: | -------: |
-| apache_builds.json | 0.13 | 0.305 | 0.146 | 2.09 |
-| canada.json | 2.25 | 13.914 | 5.475 | 2.54 |
-| citm_catalog.json | 1.73 | 4.820 | 6.470 | 0.74 |
-| github_events.json | 0.07 | 8.310 | 0.085 | 97.91 |
-| gsoc_2018.json | 3.33 | 6.029 | 3.255 | 1.85 |
-| instruments.json | 0.22 | 0.464 | 0.271 | 1.71 |
-| marine_ik.json | 2.98 | 19.533 | 7.133 | 2.74 |
-| mesh_pretty.json | 1.58 | 3.987 | 1.985 | 2.01 |
-| mesh.json | 0.72 | 2.869 | 1.363 | 2.10 |
-| numbers.json | 0.15 | 0.729 | 0.244 | 2.99 |
-| random.json | 0.51 | 1.859 | 1.983 | 0.94 |
-| sf_citylots.json | 189.78 | 1880.563 | 569.580 | 3.30 |
-| twitter.json | 0.63 | 1.633 | 2.093 | 0.78 |
-| twitterescaped.json | 0.56 | 2.051 | 0.831 | 2.47 |
-| update_center.json | 0.53 | 3.410 | 2.132 | 1.60 |
+| filename | filesize (MB) | JSON.parse(ms) | simdjson.lazyParse (ms) | JSON.parse (GB/s) | simdjson.lazyParse (GB/s) | X faster |
+| :-- | --: | --: | --: | --: | --: | --: |
+| apache_builds.json | 0.13 | 0.303 | 0.158 | 0.42 | 0.80 | 1.91 |
+| canada.json | 2.25 | 14.332 | 7.584 | 0.16 | 0.30 | 1.89 |
+| citm_catalog.json | 1.73 | 5.387 | 5.768 | 0.32 | 0.30 | 0.93 |
+| github_events.json | 0.07 | 0.192 | 0.091 | 0.34 | 0.71 | 2.10 |
+| gsoc_2018.json | 3.33 | 5.420 | 3.839 | 0.61 | 0.87 | 1.41 |
+| instruments.json | 0.22 | 0.673 | 0.619 | 0.33 | 0.36 | 1.09 |
+| marine_ik.json | 2.98 | 13.169 | 6.397 | 0.23 | 0.47 | 2.06 |
+| mesh_pretty.json | 1.58 | 5.704 | 3.043 | 0.28 | 0.52 | 1.87 |
+| mesh.json | 0.72 | 2.856 | 1.404 | 0.25 | 0.52 | 2.03 |
+| numbers.json | 0.15 | 0.643 | 0.280 | 0.23 | 0.54 | 2.30 |
+| random.json | 0.51 | 1.914 | 2.447 | 0.27 | 0.21 | 0.78 |
+| sf_citylots.json | 189.78 | 1492.166 | 709.692 | 0.13 | 0.27 | 2.10 |
+| twitter.json | 0.63 | 1.621 | 2.112 | 0.39 | 0.30 | 0.77 |
+| twitterescaped.json | 0.56 | 1.924 | 0.959 | 0.29 | 0.59 | 2.01 |
+| update_center.json | 0.53 | 2.803 | 2.715 | 0.19 | 0.20 | 1.03 |
+
+Results from a 2018 MacBook Pro with 2.3GHz Intel Core i9.
 
 ### Ops/sec
 
