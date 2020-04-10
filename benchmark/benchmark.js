@@ -39,18 +39,41 @@ suite
     console.log(`${event.target} => ${(event.target.times.period * 1000).toFixed(3)}ms`)
   })
   .on(`complete`, function() {
+    const columns = [
+      `filename`,
+      `filesize (MB)`,
+      `JSON.parse(ms)`,
+      `simdjson.lazyParse (ms)`,
+      `JSON.parse (GB/s)`,
+      `simdjson.lazyParse (GB/s)`,
+      `X faster`,
+    ];
+
     console.log(``);
-    console.log(`| filename | filesize (MB) | JSON.parse (ms) | simdjson.parse (ms) | X faster |`);
-    console.log(`| :------- | ------------: | --------------: | ------------------: | -------: |`);
+    console.log(`| ${columns.join(` | `)} |`);
+    // filename is left aligned, numbers are right aligned
+    console.log(`| ${columns.map(col => col === `filename` ? `:--` : `--:`).join(` | `)} |`)
 
     const benches = this.filter(() => true);
     for (var i = 0; i < benches.length; i+=2) {
       const fileName = benches[i].name.split(`#`)[0];
       const fileSize = Buffer.byteLength(jsonExamples[fileName.split(`.`)[0]]) / 1e6;
-      const simdParsePeriod = benches[i].times.period * 1000;
-      const jsonParsePeriod = benches[i + 1].times.period * 1000;
-      const xFaster = jsonParsePeriod / simdParsePeriod;
-      console.log(`| ${fileName} | ${fileSize.toFixed(2)} | ${jsonParsePeriod.toFixed(3)} | ${simdParsePeriod.toFixed(3)} | ${xFaster.toFixed(2)} |`);
+      const jsonParseMs = benches[i + 1].times.period * 1000;
+      const simdLazyParseMs = benches[i].times.period * 1000;
+      const jsonParseGbps = fileSize / jsonParseMs;
+      const simdjsonLazyParseGbps = fileSize / simdLazyParseMs;
+      const xFaster = jsonParseMs / simdLazyParseMs;
+      const row = [
+        fileName,
+        fileSize.toFixed(2),
+        jsonParseMs.toFixed(3),
+        simdLazyParseMs.toFixed(3),
+        jsonParseGbps.toFixed(2),
+        simdjsonLazyParseGbps.toFixed(2),
+        xFaster.toFixed(2),
+      ];
+
+      console.log(`| ${row.join(` | `)} |`);
     }
   })
   .run({async: false });
