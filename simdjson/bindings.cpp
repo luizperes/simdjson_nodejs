@@ -98,10 +98,10 @@ Napi::Value simdjsonnode::ValueForKeyPathWrapped(const Napi::CallbackInfo& info)
   Napi::Env env = info.Env();
   std::string path = info[0].As<Napi::String>();
   Napi::Object _this = info.This().As<Napi::Object>();
-  Napi::External<dom::document> buffer = _this.Get("buffer").As<Napi::External<dom::document>>();
-  dom::document * doc = buffer.Data();
+  Napi::External<dom::parser> buffer = _this.Get("buffer").As<Napi::External<dom::parser>>();
+  dom::parser * parser = buffer.Data();
   try {
-    return simdjsonnode::findKeyPath(env, parseKeyPath(path), doc->root());
+    return simdjsonnode::findKeyPath(env, parseKeyPath(path), parser->doc.root());
   } catch (simdjson_error &error) {
     Napi::Error::New(env, error_message(error.error())).ThrowAsJavaScriptException();
     return env.Null();
@@ -125,15 +125,15 @@ Napi::Value simdjsonnode::ParseWrapped(const Napi::CallbackInfo& info) {
 Napi::Object simdjsonnode::LazyParseWrapped(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   std::string json = info[0].As<Napi::String>();
-  dom::parser parser;
-  error_code error = parser.parse(json).error();
+  dom::parser * parser = new dom::parser();
+  error_code error = parser->parse(json).error();
   if (error) {
     Napi::Error::New(env, error_message(error)).ThrowAsJavaScriptException();
     return Napi::Object::New(env);
   }
-  Napi::External<dom::document> buffer = Napi::External<dom::document>::New(env, new dom::document(std::move(parser.doc)),
-    [](Napi::Env /*env*/, dom::document * doc) {
-      delete doc;
+  Napi::External<dom::parser> buffer = Napi::External<dom::parser>::New(env, parser,
+    [](Napi::Env /*env*/, dom::parser * parser) {
+      delete parser;
     });
   Napi::Object result = Napi::Object::New(env);
   result.Set("buffer", buffer);
