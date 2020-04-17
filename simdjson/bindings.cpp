@@ -112,10 +112,8 @@ Napi::Value simdjsonnode::ParseWrapped(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   std::string json = info[0].As<Napi::String>();
   try {
-
     dom::parser parser;
     return makeJSONObject(env, parser.parse(json));
-
   } catch (simdjson_error &error) {
     Napi::Error::New(env, error_message(error.error())).ThrowAsJavaScriptException();
     return env.Null();
@@ -141,9 +139,39 @@ Napi::Object simdjsonnode::LazyParseWrapped(const Napi::CallbackInfo& info) {
   return result;  
 }
 
+Napi::Object simdjsonnode::BuffersWithParseWrapped(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  std::string json = info[0].As<Napi::String>();
+  dom::parser parser;
+  error_code error = parser.parse(json).error();
+  if (error) {
+    Napi::Error::New(env, error_message(error)).ThrowAsJavaScriptException();
+    return Napi::Object::New(env);
+  }
+  uint64_t *tapebuf = std::move(parser.doc.tape).release();
+  uint8_t *stringbuf = std::move(parser.doc.string_buf).release();
+  size_t tapebufsize = parser.current_loc;
+  size_t stringbufsize = parser.current_string_buf_loc - stringbuf;
+  Napi::ArrayBuffer tapebufobj = Napi::ArrayBuffer::New(env, static_cast<void *>(tapebuf), tapebufsize,
+    [](Napi::Env /*env*/, void * obj) {
+      uint64_t *o = static_cast<uint64_t *>(obj);
+      delete o;
+    });
+  Napi::ArrayBuffer stringbufobj = Napi::ArrayBuffer::New(env, static_cast<void *>(stringbuf), stringbufsize,
+    [](Napi::Env /*env*/, void * obj) {
+      uint8_t *o = static_cast<uint8_t *>(obj);
+      delete o;
+    });
+  Napi::Object result = Napi::Object::New(env);
+  result.Set("tapeBuffer", tapebufobj);
+  result.Set("stringBuffer", stringbufobj);
+  return result;
+}
+
 Napi::Object simdjsonnode::Init(Napi::Env env, Napi::Object exports) {
   exports.Set("isValid", Napi::Function::New(env, simdjsonnode::IsValidWrapped));
   exports.Set("parse", Napi::Function::New(env, simdjsonnode::ParseWrapped));
   exports.Set("lazyParse", Napi::Function::New(env, simdjsonnode::LazyParseWrapped));
+  exports.Set("buffersWith", Napi::Function::New(env, simdjsonnode::BuffersWithParseWrapped));
   return exports;
 }
