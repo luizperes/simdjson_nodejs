@@ -33,7 +33,7 @@
   "homepage": "https://github.com/luizperes/simdjson_nodejs#readme",
   "devDependencies": {
     "benchmark": "^2.1.4",
-    "mocha": "7.1.0",
+    "mocha": "^8.0.1",
     "node-gyp": "^6.1.0"
   },
   "dependencies": {
