@@ -45,7 +45,7 @@ describe(`simdjson`, function () {
     it(`throws error for invalid json str`, function () {
       assert.throws(
         () => simdjson.parse(jsonExamples.demo + `#$`),
-        new Error(`Something went wrong while writing to the tape`)
+        new Error(`The JSON document has an improper structure: missing or superfluous commas, braces, missing keys, etc.`)
       );
     });
   });
