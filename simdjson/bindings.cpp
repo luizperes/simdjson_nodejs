@@ -1,7 +1,8 @@
 #include "bindings.h"
 
 bool simdjsonnode::isValid(std::string json) {
-  return !dom::parser().parse(json).error();
+  dom::parser parser;
+  return !parser.parse(json).error();
 }
 
 Napi::Boolean simdjsonnode::IsValidWrapped(const Napi::CallbackInfo& info) {
