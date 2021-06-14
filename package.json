@@ -1,6 +1,6 @@
 {
   "name": "simdjson",
-  "version": "0.5.0",
+  "version": "0.9.2",
   "description": "Parsing gigabytes of JSON per second",
   "main": "index.js",
   "types": "index.d.ts",
