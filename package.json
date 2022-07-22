@@ -8,6 +8,13 @@
     "registry": "https://registry.npmjs.org"
   },
   "gypfile": true,
+  "files": [
+    "lib",
+    "simdjson",
+    "index.d.ts",
+    "index.js",
+    "binding.gyp"
+  ],
   "scripts": {
     "benchmark": "node benchmark/benchmark.js",
     "build": "node-gyp rebuild",
