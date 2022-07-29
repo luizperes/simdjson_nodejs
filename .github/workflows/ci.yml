@@ -1,0 +1,133 @@
+name: tests
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  alpine:
+    name: Alpine
+    runs-on: ubuntu-latest
+    container:
+      image: node:${{ matrix.node }}-alpine
+    strategy:
+      fail-fast: false
+      matrix:
+        node:
+          - 14
+          - 16
+          - 18
+
+    steps:
+      - name: Install Alpine build tools
+        run: apk add --no-cache python3 make git gcc g++
+
+      - uses: actions/checkout@v3
+
+      - name: Install packages
+        run: npm install --unsafe-perm
+
+      - name: Run tests
+        run: npm test
+
+  mac-os:
+    name: MacOS
+    runs-on: macos-latest
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        node-version: [14, 16, 18]
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - name: Setup Node ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+  ubuntu:
+    name: Ubuntu
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        node-version: [14, 16, 18]
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - name: Setup Node ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+
+  windows:
+    name: Windows
+    runs-on: windows-2019
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node:
+          - 14
+          - 16
+          - 18
+
+        architecture:
+          - x64
+          - x86
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+          architecture: ${{ matrix.architecture }}
+
+      - name: Install packages
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+  automerge:
+    name: Automerge Dependabot PRs
+    if: >
+        github.event_name == 'pull_request' &&
+        github.event.pull_request.user.login == 'dependabot[bot]'
+    needs:
+      - alpine
+      - ubuntu
+      - mac-os
+      - windows
+    permissions:
+      pull-requests: write
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: fastify/github-action-merge-dependabot@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          target: major
